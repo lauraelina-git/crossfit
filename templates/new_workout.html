@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>New workout!!</title>
+</head>
+
+<body>
+  <h1> Workout of the Day: create a new workout record</h1>
+
+  <form action="/create_workout" method="post">
+    <p>
+      WOD date: <br />
+      <input type="date" id="pvm" name="workout_date">
+    </p>
+    <p>
+      Description of the warm up: <br />
+      <textarea name="warmup_description" rows="8" cols="80"></textarea>
+    </p>
+    <p>
+      Description of the WOD: <br />
+      <textarea name="wod_description" rows="20" cols="80"></textarea>
+    </p>
+    <p>
+      Description of the extras <br />
+      <textarea name="extras_description" rows="8" cols="80"></textarea>
+    </p>
+    <input type="submit" value="Create workout" />
+  </form>
+</body>
+
+</html>
+
+

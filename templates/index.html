@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Sign in</title>
+</head>
+
+<body>
+  <h1>Crossfit workout diary!</h1>
+  {% if session.username %}
+  <p>
+    Current user: {{ session.username }}
+  </p>
+  <p>
+    Current id: {{ session.user_id }}
+  </p>
+  <p>
+    <a href="/new_workout"> New workout</a>
+  </p>
+  <p>
+    <a href="/logout">Logout</a>
+  </p>
+
+  {% else %}
+  <form action="/login" method="post">
+    <p>
+      Username: <br />
+      <input type="text" name="username" />
+    </p>
+    <p>
+      Password: <br />
+      <input type="password" name="password" />
+    </p>
+    <input type="submit" value="Sign in" />
+  </form>
+  <form action="/register" method="get">
+    <p>
+      Or create a new user:
+    </p>
+    <input type="submit" value="Sign up" />
+  </form>
+
+  {% endif %}
+</body>
+
+</html>
