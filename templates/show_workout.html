@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Workout of the Day for {{workout.workout_date}}</title>
+</head>
+
+<body>
+  <h1> {{workout.username}}'s Workout of the Day for {{workout.workout_date}}</h1>
+  <p> 
+    {{ workout.warmup_description }}
+  </p> 
+  <p> 
+    {{ workout.wod_description }}
+  </p> 
+  <p> 
+    {{ workout.extras_description }}
+  </p> 
+  <p>
+    <a href="/"> Back to {{workout.username}}'s diary</a>
+  </p>
+</body>
+
+</html>
+
+

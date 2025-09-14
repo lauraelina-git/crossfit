@@ -11,7 +11,13 @@ app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    workout_list=workouts.list_workouts()
+    return render_template("index.html", workouts=workout_list)
+
+@app.route("/workout/<int:workout_id>")
+def show_workout(workout_id):
+    workout=workouts.list_workout(workout_id)
+    return render_template("show_workout.html", workout=workout)
 
 @app.route("/new_workout")
 def new_workout():
