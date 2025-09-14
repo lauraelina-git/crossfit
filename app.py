@@ -4,6 +4,7 @@ from flask import redirect, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import db
+import workouts
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -23,9 +24,9 @@ def create_workout():
     wod_description=request.form["wod_description"]
     extras_description=request.form["extras_description"]
     user_id=session["user_id"]
-    sql= """INSERT INTO workouts (workout_date, warmup_description, wod_description, extras_description, user_id)
-            VALUES (?,?,?,?,?)"""
-    db.execute(sql, [workout_date, warmup_description, wod_description, extras_description, user_id])
+
+    workouts.add_workout(workout_date, warmup_description, wod_description, extras_description, user_id)    
+
     return redirect("/") #for now let's go to the frontpage, but figure out something better later
 
 @app.route("/register")
