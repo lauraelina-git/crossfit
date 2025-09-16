@@ -7,11 +7,11 @@
 
 <body>
   <h1>My crossfit workout diary</h1>
-  {% if session.username %}
-  <h2>{{ session.username }}'s workouts:</h2>
+
+  <h2>Workouts done by {{ session.username }}:</h2>
   <ul>
     {% for workout in workouts %}
-    <li><a href="/workout/{{ workout.id }}">{{ workout.workout_date }}</a></li>
+    <li><a href="/workout/{{ workout.id }}"> WOD {{ workout.workout_date }}</a></li>
     {% endfor %}
   </ul>
   <p>
@@ -23,27 +23,6 @@
   <p>
     <a href="/logout">Logout</a>
   </p>
-
-  {% else %}
-  <form action="/login" method="post">
-    <p>
-      Username: <br />
-      <input type="text" name="username" />
-    </p>
-    <p>
-      Password: <br />
-      <input type="password" name="password" />
-    </p>
-    <input type="submit" value="Sign in" />
-  </form>
-  <form action="/register" method="get">
-    <p>
-      Or create a new user:
-    </p>
-    <input type="submit" value="Sign up" />
-  </form>
-
-  {% endif %}
 </body>
 
 </html>

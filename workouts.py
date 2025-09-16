@@ -5,9 +5,18 @@ def add_workout(workout_date, warmup_description, wod_description, extras_descri
             VALUES (?,?,?,?,?)"""
     db.execute(sql, [workout_date, warmup_description, wod_description, extras_description, user_id])
 
-def list_workouts():
-    sql="""SELECT id, workout_date, user_id FROM workouts ORDER BY workout_date DESC"""
-    return db.query(sql)
+def list_workouts(user_id=None): #we will need the list of all workouts probably later
+    if user_id is None:
+        sql = """SELECT id, workout_date, user_id
+                 FROM workouts
+                 ORDER BY workout_date DESC"""
+        return db.query(sql)
+    else:
+        sql = """SELECT id, workout_date, user_id
+                 FROM workouts
+                 WHERE user_id = ?
+                 ORDER BY workout_date DESC"""
+        return db.query(sql, [user_id])
 
 def list_workout(workout_id):
     sql = """SELECT workouts.workout_date,

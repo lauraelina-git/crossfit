@@ -11,7 +11,9 @@ app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
-    workout_list=workouts.list_workouts()
+    if "user_id" not in session: #if the user is not logged in... we shall go to login
+        return redirect("/login")
+    workout_list = workouts.list_workouts(user_id=session["user_id"])
     return render_template("index.html", workouts=workout_list)
 
 @app.route("/workout/<int:workout_id>")
@@ -44,20 +46,24 @@ def create():
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
+
     if password1 != password2:
         return "ERROR: The passwords must be the same" #this should be re-routed to a sign_in/sign_up page with a note
+
+    is_coach = 1 if request.form.get("is_coach") else 0
     password_hash = generate_password_hash(password1)
 
     try:
-        sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
-        db.execute(sql, [username, password_hash])
+        sql = "INSERT INTO users (username, password_hash, is_coach) VALUES (?, ?, ?)"
+        db.execute(sql, [username, password_hash, is_coach])
     except sqlite3.IntegrityError:
         return "ERROR: The username is already in use" #this should be re-routed to a sign_in/sign_up page with note
 
-    return render_template("index.html") # this will later move to the user home page
+    return redirect("/login") #return to login
 
 @app.route("/login", methods=["GET","POST"])
 def login():
+    error=None
     if request.method == "GET":
       return render_template("login.html")
 
