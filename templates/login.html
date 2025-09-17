@@ -16,8 +16,10 @@
   <p>
     <a href="/logout">Sign out</a>
   </p>
-    {% else %}
-
+  {% else %}
+  {% if error %}
+  <p style="color:red;">{{ error }}</p>
+  {% endif %}
   <form action="/login" method="post">
     <p>
       Username: <br />

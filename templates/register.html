@@ -7,6 +7,9 @@
 
 <body>
   <h1> Sign up as a new user </h1>
+  {% if error %}
+  <p style="color:red;">{{ error }}</p>
+  {% endif %}
 
   <form action="/create" method="post">
     <p>
