@@ -19,11 +19,33 @@ def index():
     workout_list = workouts.list_workouts(user_id=session["user_id"])
     return render_template("index.html", workouts=workout_list)
 
-@app.route("/workout/<int:workout_id>")
-def show_workout(workout_id):
-    """list the workouts"""
-    workout=workouts.list_workout(workout_id)
-    return render_template("show_workout.html", workout=workout)
+@app.route("/new_log", methods=["GET", "POST"])
+def new_log():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    all_wods = workouts.list_workouts()
+    selected_wod = None
+
+    if request.method == "POST":
+        if "select_wod" in request.form:
+            wod_id = request.form.get("workout_id")
+            if wod_id:
+                selected_wod = workouts.list_workout(int(wod_id))
+        elif "save_log" in request.form:
+            wod_id = request.form.get("workout_id")
+            log_notes = request.form.get("log_notes")
+            log_date = request.form.get("log_date")
+            user_id = session["user_id"]
+
+            if wod_id and log_notes and log_date:
+                sql = """INSERT INTO achievements 
+                         (achievement_date, achievement_text, user_id, workout_id) 
+                         VALUES (?, ?, ?, ?)"""
+                db.execute(sql, [log_date, log_notes, user_id, int(wod_id)])
+                return redirect("/")
+
+    return render_template("new_log.html", wods=all_wods, selected_wod=selected_wod)
 
 @app.route("/new_workout")
 def new_workout():
@@ -41,7 +63,7 @@ def create_workout():
 
     workouts.add_workout(workout_date,warmup_description,wod_description,extras_description,user_id)
 
-    return redirect("/") #for now let's go to the frontpage, but figure out something better later
+    return redirect("/")
 
 @app.route("/register")
 def register():
@@ -80,7 +102,7 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        sql = "SELECT id, password_hash FROM users WHERE username = ?"
+        sql = "SELECT id, password_hash, is_coach FROM users WHERE username = ?"
         result = db.query(sql, [username])
 
         if not result:
@@ -89,10 +111,12 @@ def login():
         user=result[0]
         user_id = user["id"]
         password_hash = user["password_hash"]
+        is_coach=user["is_coach"]
 
         if check_password_hash(password_hash, password):
             session["user_id"]= user_id
             session["username"] = username
+            session["is_coach"] = is_coach
             return redirect("/")
 
         return render_template("login.html", error="Wrong username or password")

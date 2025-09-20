@@ -8,7 +8,7 @@
 <body>
   <h1> Workout of the Day: create a new WOD</h1>
 
-  <form action="/create_workout" method="post">
+  <form action="/create_workout" method="post" style="display:inline-block">
     <p>
       WOD date: <br />
       <input type="date" id="pvm" name="workout_date">
@@ -26,9 +26,11 @@
       <textarea name="extras_description" rows="8" cols="80"></textarea>
     </p>
     <input type="submit" value="Create workout" />
+    <form action="/" method="get" style="display:inline-block">
+      <input type="submit" value="Cancel" />
+    </form>
   </form>
-</body>
 
-</html>
+</body>
 
 
