@@ -24,7 +24,8 @@ def list_workouts(user_id=None):
     return db.query(sql, [user_id])
 
 def list_workout(workout_id):
-    sql = """SELECT workouts.workout_date,
+    sql = """SELECT workouts.id,
+                    workouts.workout_date,
                     workouts.warmup_description,
                     workouts.wod_description,
                     workouts.extras_description,

@@ -14,10 +14,10 @@ CREATE TABLE workouts (
     user_id INTEGER NOT NULL REFERENCES users
 );
 
-CREATE TABLE achievements (
+CREATE TABLE logs (
     id INTEGER PRIMARY KEY,
-    achievement_date DATE NOT NULL,
-    achievement_text TEXT,
+    log_date DATE NOT NULL,
+    log_text TEXT,
     user_id INTEGER NOT NULL REFERENCES users,
     workout_id INTEGER NOT NULL REFERENCES workouts
 );

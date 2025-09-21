@@ -7,6 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import db
 import workouts
+import logs
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -17,7 +18,8 @@ def index():
     if "user_id" not in session:
         return redirect("/login")
     workout_list = workouts.list_workouts(user_id=session["user_id"])
-    return render_template("index.html", workouts=workout_list)
+    user_logs=logs.list_logs(user_id=session["user_id"])
+    return render_template("index.html", workouts=workout_list, logs=user_logs)
 
 @app.route("/new_log", methods=["GET", "POST"])
 def new_log():
@@ -32,6 +34,7 @@ def new_log():
             wod_id = request.form.get("workout_id")
             if wod_id:
                 selected_wod = workouts.list_workout(int(wod_id))
+
         elif "save_log" in request.form:
             wod_id = request.form.get("workout_id")
             log_notes = request.form.get("log_notes")
@@ -39,12 +42,13 @@ def new_log():
             user_id = session["user_id"]
 
             if wod_id and log_notes and log_date:
-                sql = """INSERT INTO achievements 
-                         (achievement_date, achievement_text, user_id, workout_id) 
-                         VALUES (?, ?, ?, ?)"""
-                db.execute(sql, [log_date, log_notes, user_id, int(wod_id)])
-                return redirect("/")
-
+                log_id = logs.add_log(log_date, log_notes, user_id, int(wod_id))
+                if log_id:
+                    return redirect("/")
+                else:
+                    return "Error saving log", 500
+            else:
+                print("Missing required fields.")
     return render_template("new_log.html", wods=all_wods, selected_wod=selected_wod)
 
 @app.route("/new_workout")
@@ -64,6 +68,17 @@ def create_workout():
     workouts.add_workout(workout_date,warmup_description,wod_description,extras_description,user_id)
 
     return redirect("/")
+
+@app.route("/workout/<int:workout_id>")
+def show_workout(workout_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    wod = workouts.list_workout(int(workout_id))
+    if not wod:
+        return "Workout not found", 404
+
+    return render_template("show_workout.html", workout=wod)
 
 @app.route("/register")
 def register():

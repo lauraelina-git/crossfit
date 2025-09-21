@@ -8,23 +8,26 @@
 <body>
   <h1>My crossfit workout diary</h1>
 
+  <h2>Workouts done by {{ session.username }}:</h2>
+  <ul>
+    {% for log in logs %}
+    <li><a href="/log/{{ log.id }}"> Training on {{ log.log_date }}: {{ log.log_text }} </a></li>
+    {% endfor %}
+  </ul>
+  {% if session.is_coach==1 %}
   <h2>Workouts created by {{ session.username }}:</h2>
   <ul>
     {% for workout in workouts %}
     <li><a href="/workout/{{ workout.id }}"> WOD {{ workout.workout_date }}</a></li>
     {% endfor %}
   </ul>
+  <a href="/new_workout"> Create a new WOD</a>
+  {% endif %}
   <p>
-    {% if session.is_coach==1 %}
-    <a href="/new_workout"> Create a new WOD</a>
-    {% endif %}
-  </p>
-    <p>
     <a href="/new_log"> Create a new training log</a>
   </p>
   <p>
     <a href="/logout">Logout</a>
   </p>
 </body>
-
 </html>

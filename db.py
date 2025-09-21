@@ -8,7 +8,9 @@ def get_connection():
     con.row_factory = sqlite3.Row
     return con
 
-def execute(sql, params=[]):
+def execute(sql, params=None):
+    if params is None:
+        params = []
     con = get_connection()
     try:
         result = con.execute(sql, params)
