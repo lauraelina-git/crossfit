@@ -51,6 +51,17 @@ def new_log():
                 print("Missing required fields.")
     return render_template("new_log.html", wods=all_wods, selected_wod=selected_wod)
 
+@app.route("/log/<int:log_id>")
+def show_log(log_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    training_log = logs.list_log(int(log_id))
+    if not training_log:
+        return "training log not found", 404
+
+    return render_template("show_log.html", log=training_log)
+
 @app.route("/new_workout")
 def new_workout():
     """register a new workout log"""

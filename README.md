@@ -2,12 +2,13 @@
 A webtool to log crossfit workouts
 
 ## Application functions:
-* A user can be created.
+* A user can be created
 * User can sign in to the application.
-* User can create new workout logs.
-* User can add images to the workout logs.
-* User can see the logs created to the application.
-* User can search for the logs created using keywords.
+* User can be assigned 2 roles: a coach and an athlete
+* Only Coaches can create WODs (Workout of the Day)
+* Athletes and Coaches can choose any WOD created and add their own training log with the date they did the WOD
+* When a user completes a WOD, the user can see the training logs of all users that have completed the same WOD and cheer/give kudos.
+* Kudos are private, only the user can see them.
+* User can add images to their own training logs.
+* User can search for the WODs created using keywords.
 * There is a user page that shows the statistics of the workouts done by the user.
-* The user can choose if the workout is done in a team or independently.
-* The users can cheer/give kudos and comment each other's workouts.
