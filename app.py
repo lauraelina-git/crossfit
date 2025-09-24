@@ -62,6 +62,30 @@ def show_log(log_id):
 
     return render_template("show_log.html", log=training_log)
 
+@app.route("/edit_log/<int:log_id>", methods=["GET","POST"])
+def edit_log(log_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    training_log = logs.list_log(log_id)
+    if not training_log:
+        return "Log not found", 404
+
+    if training_log["user_id"] != session["user_id"]:
+        return "Unauthorized to change the log", 403
+
+    if request.method == "POST":
+        log_date = request.form.get("log_date")
+        log_text = request.form.get("log_notes")
+
+        if log_date and log_text:
+            logs.update_log(log_id, log_date, log_text, session["user_id"])
+            return redirect(f"/log/{log_id}")
+        else:
+            return render_template("edit_log.html", log=training_log, error="All fields required")
+
+    return render_template("edit_log.html", log=training_log)
+
 @app.route("/new_workout")
 def new_workout():
     """register a new workout log"""

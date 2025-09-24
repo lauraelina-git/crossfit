@@ -29,6 +29,7 @@ def list_log(log_id):
     sql = """SELECT l.id,
                     l.log_date,
                     l.log_text,
+                    l.user_id,
                     u.username,
                     w.workout_date,
                     w.warmup_description,
@@ -40,3 +41,18 @@ def list_log(log_id):
             JOIN workouts w ON l.workout_id=w.id
             WHERE l.id=?"""
     return db.query(sql, [log_id])[0]
+
+
+def update_log(log_id, log_date, log_text, user_id):
+    sql = """UPDATE logs
+            SET log_date = ?,
+            log_text = ?
+            WHERE id = ? AND user_id = ?"""
+    try:
+        db.execute(sql, [log_date, log_text, log_id, user_id])
+        print(f"Log changed, log ID: {log_id}")
+        return log_id
+    except Exception as e:
+        print(f"Error adding log: {e}")
+        return None
+    

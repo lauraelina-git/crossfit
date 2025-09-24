@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit training Log</title>
+</head>
+
+<body>
+  <h1>Edit a training log</h1>
+
+    <h2>WOD Details</h2>
+
+    <p><strong>Warmup:</strong> {{ log.warmup_description }}</p>
+    <p><strong>WOD:</strong> {{ log.wod_description }}</p>
+    <p><strong>Extras:</strong> {{ log.extras_description }}</p>
+
+    <form action="/edit_log/{{ log.id }}" method="post">
+      <p>
+        Date: <br>
+        <input type="date" name="log_date" value="{{ log.log_date }}" required>
+      </p>
+      <p>
+        Your notes: <br>
+        <textarea name="log_notes" rows="5" cols="50" required>{{ log.log_text }}</textarea>
+      </p>
+      <input type="submit" value="Save Log">
+  </form>
+
+  <form action="/" method="get" style="margin-top:10px;">
+    <input type="submit" value="Cancel">
+  </form>
+</body>
+</html>

@@ -2,11 +2,12 @@
 <html>
 
 <head>
-  <title>{{log.user_id}}'s training log for {{log.log_date}}</title>
+  <title>{{log.username}}'s training log on {{log.log_date}}</title>
 </head>
 
 <body>
-  <h1> Workout of the Day for {{log.workout_date}}</h1>
+  <h1> {{log.username}}'s training log on {{log.log_date}}</h1>
+  <h2> {{log.workout_date}} Workout of the Day </h2>
   <p> 
     {{ log.warmup_description }}
   </p> 
@@ -20,7 +21,10 @@
     Results: {{ log.log_text }}
   </p>
   <p>
-    <a href="/"> Back to {{log.username}}'s diary</a>
+    <a href="/"> Back to {{ log.username }}'s diary</a>
+  </p>
+  <p>
+    <a href="/edit_log/{{ log.id }}"> Edit log </a>
   </p>
 </body>
 
