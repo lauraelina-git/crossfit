@@ -1,4 +1,4 @@
-"""This is an application used to create and log "Workouts of the Day" (WOD) in a crossfit trainning center"""
+"""Application to create and log Crossfit "Workouts of the Day" (WOD)"""
 
 import sqlite3
 from flask import Flask
@@ -10,7 +10,7 @@ import workouts
 import logs
 
 app = Flask(__name__)
-app.secret_key = config.secret_key
+app.secret_key = config.SECRET_KEY
 
 @app.route("/")
 def index():
@@ -23,6 +23,7 @@ def index():
 
 @app.route("/new_log", methods=["GET", "POST"])
 def new_log():
+    """Create a new log"""
     if "user_id" not in session:
         return redirect("/login")
 
@@ -45,14 +46,13 @@ def new_log():
                 log_id = logs.add_log(log_date, log_notes, user_id, int(wod_id))
                 if log_id:
                     return redirect("/")
-                else:
-                    return "Error saving log", 500
             else:
                 print("Missing required fields.")
     return render_template("new_log.html", wods=all_wods, selected_wod=selected_wod)
 
 @app.route("/log/<int:log_id>")
 def show_log(log_id):
+    """Showing the user's trainging logs"""
     if "user_id" not in session:
         return redirect("/login")
 
@@ -64,6 +64,7 @@ def show_log(log_id):
 
 @app.route("/edit_log/<int:log_id>", methods=["GET","POST"])
 def edit_log(log_id):
+    """Editing the user's logs"""
     if "user_id" not in session:
         return redirect("/login")
 
@@ -81,31 +82,36 @@ def edit_log(log_id):
         if log_date and log_text:
             logs.update_log(log_id, log_date, log_text, session["user_id"])
             return redirect(f"/log/{log_id}")
-        else:
-            return render_template("edit_log.html", log=training_log, error="All fields required")
+
+        return render_template("edit_log.html", log=training_log, error="All fields required")
 
     return render_template("edit_log.html", log=training_log)
 
 @app.route("/new_workout")
 def new_workout():
-    """register a new workout log"""
+    """Register a new workout log"""
     return render_template("new_workout.html")
 
 @app.route("/create_workout", methods=["POST"])
 def create_workout():
-    """create workout"""
-    workout_date=request.form["workout_date"]
+    """Create workout"""
+    wod_date=request.form["workout_date"]
     warmup_description=request.form["warmup_description"]
     wod_description=request.form["wod_description"]
     extras_description=request.form["extras_description"]
     user_id=session["user_id"]
 
-    workouts.add_workout(workout_date,warmup_description,wod_description,extras_description,user_id)
+    if not wod_date or not wod_description:
+        return render_template(
+            "new_workout.html", 
+            error="WOD date and description of the WOD are mandatory")
 
+    workouts.add_workout(wod_date,warmup_description,wod_description,extras_description,user_id)
     return redirect("/")
 
 @app.route("/workout/<int:workout_id>")
 def show_workout(workout_id):
+    """Showing the workout details"""
     if "user_id" not in session:
         return redirect("/login")
 
@@ -117,12 +123,12 @@ def show_workout(workout_id):
 
 @app.route("/register")
 def register():
-    """register a new user"""
+    """Register a new user"""
     return render_template("register.html")
 
 @app.route("/create", methods=["POST"])
 def create():
-    """create a new user profile"""
+    """Create a new user profile"""
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
@@ -144,7 +150,7 @@ def create():
 
 @app.route("/login", methods=["GET","POST"])
 def login():
-    """log in to the application"""
+    """Log in to the application"""
     if request.method == "GET":
         return render_template("login.html")
 
@@ -173,7 +179,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    """logout from the application and delete the session"""
+    """Logout from the application and delete the session"""
     del session["user_id"]
     del session["username"]
     return redirect("/")

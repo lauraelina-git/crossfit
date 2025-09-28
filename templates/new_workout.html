@@ -8,6 +8,10 @@
 <body>
   <h1> Workout of the Day: create a new WOD</h1>
 
+  {% if error %}
+  <p style="color:red;">{{ error }}</p>
+  {% endif %}
+
   <form action="/create_workout" method="post" style="display:inline-block">
     <p>
       WOD date: <br />
@@ -26,11 +30,11 @@
       <textarea name="extras_description" rows="8" cols="80"></textarea>
     </p>
     <input type="submit" value="Create workout" />
-    <form action="/" method="get" style="display:inline-block">
-      <input type="submit" value="Cancel" />
-    </form>
+  </form>
+  <form action="/" method="get">
+    <p>
+    </p>
+    <input type="submit" value="Cancel" />
   </form>
 
 </body>
-
-
