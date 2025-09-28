@@ -165,6 +165,23 @@ def edit_workout(workout_id):
     return render_template("edit_workout.html", workout=wod)
 
 
+@app.route("/remove_log/<int:log_id>", methods=["GET","POST"])
+def remove_log(log_id):
+    """Remove a training log"""
+    if "user_id" not in session:
+        return redirect("/login")
+    user_id = session["user_id"]
+
+    if request.method == "GET":
+        current_log=logs.list_log(log_id)
+        return render_template("remove_log.html", log=current_log)
+
+    if request.method =="POST":
+        logs.remove_log(log_id, user_id)
+
+    return redirect("/")
+
+
 @app.route("/register")
 def register():
     """Register a new user"""

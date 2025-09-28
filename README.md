@@ -8,7 +8,7 @@ A webtool to log crossfit workouts
 * Only Coaches can create WODs (Workout of the Day)
 * All coaches can edit workouts, both the ones they have created and the ones other coaches have created.
 * Athletes and Coaches can choose any WOD created and add their own training log with the date they did the WOD
-* Users can edit their own training logs.
+* Users can edit and remove their own training logs.
 * When a user completes a WOD, the user can see the training logs of all users that have completed the same WOD and cheer/give kudos.
 * Kudos are private, only the user can see them.
 * User can add images to their own training logs.

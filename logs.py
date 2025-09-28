@@ -74,3 +74,18 @@ def update_log(log_id, log_date, log_text, user_id):
     except sqlite3.Error as e:
         print(f"Error updating log: {e}")
         return None
+
+def remove_log(log_id, user_id):
+    """Remove an existing log entry if it belongs to the given user."""
+    sql = """DELETE FROM logs
+            WHERE id = ?
+            AND user_id = ?"""
+    try:
+        result=db.execute(sql, [log_id, user_id])
+        if result.rowcount==0:
+            return False
+        print("Log removed")
+        return True
+    except sqlite3.Error as e:
+        print(f"Error deleting log: {e}")
+        return False

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Remove training Log</title>
+</head>
+
+<body>
+  <h1>Remove a training log</h1>
+
+    <h2>WOD Details</h2>
+    <p><strong>Are you sure you want to remove this training log?</strong> </p>
+    <p>Warmup:{{ log.warmup_description }}</p>
+    <p>WOD: {{ log.wod_description }}</p>
+    <p>Extras:{{ log.extras_description }}</p>
+    <p>Results: {{ log.log_text }}</p>
+
+    <form action="/remove_log/{{ log.id }}" method="post">
+      <input type="submit" name="remove" value="Remove Log">
+    </form>
+  <form action="/" method="get" style="margin-top:10px;">
+    <input type="submit" name="cancel" value="Cancel">
+  </form>
+</body>
+</html>
