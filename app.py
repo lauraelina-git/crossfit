@@ -17,9 +17,15 @@ def index():
     """Front-page view"""
     if "user_id" not in session:
         return redirect("/login")
-    workout_list = workouts.list_workouts(user_id=session["user_id"])
+    user_workoutlist= workouts.list_workouts(user_id=session["user_id"])
+    workout_list= workouts.list_workouts()
     user_logs=logs.list_logs(user_id=session["user_id"])
-    return render_template("index.html", workouts=workout_list, logs=user_logs)
+    return render_template(
+        "index.html",
+        user_workouts = user_workoutlist,
+        workouts = workout_list,
+        logs=user_logs
+        )
 
 @app.route("/new_log", methods=["GET", "POST"])
 def new_log():
@@ -89,7 +95,7 @@ def edit_log(log_id):
 
 @app.route("/new_workout")
 def new_workout():
-    """Register a new workout log"""
+    """Register a new workout"""
     return render_template("new_workout.html")
 
 @app.route("/create_workout", methods=["POST"])
@@ -120,6 +126,44 @@ def show_workout(workout_id):
         return "Workout not found", 404
 
     return render_template("show_workout.html", workout=wod)
+
+@app.route("/edit_workout/<int:workout_id>", methods=["GET","POST"])
+def edit_workout(workout_id):
+    """Edit an existing workout (coaches only)"""
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    if session.get("is_coach") != 1:
+        return "Unauthorized: only coaches can edit workouts", 403
+
+    wod = workouts.list_workout(workout_id)
+    if not wod:
+        return "Workout not found", 404
+
+    if request.method == "POST":
+        wod_date=request.form.get("workout_date")
+        warmup_description=request.form.get("warmup_description")
+        wod_description=request.form.get("wod_description")
+        extras_description=request.form.get("extras_description")
+
+        if wod_date and wod_description:
+            workouts.edit_workout(
+                wod_date,
+                warmup_description,
+                wod_description,
+                extras_description,
+                workout_id
+                )
+
+        return render_template(
+            "edit_workout.html",
+            workout=wod,
+            error="Date and workout description required"
+            )
+
+    return render_template("edit_workout.html", workout=wod)
+
 
 @app.route("/register")
 def register():

@@ -1,4 +1,5 @@
 """Database operations for workouts"""
+import sqlite3
 import db
 
 def add_workout(workout_date, warmup_description, wod_description, extras_description, user_id):
@@ -42,3 +43,32 @@ def list_workout(workout_id):
             WHERE workouts.user_id=users.id AND
             workouts.id=?"""
     return db.query(sql, [workout_id])[0]
+
+def edit_workout(
+        workout_date,
+        warmup_description,
+        workout_description,
+        extras_description,
+        workout_id
+        ):
+    """Update an existing workout"""
+    sql = """UPDATE workouts
+            SET workout_date = ?,
+                warmup_description = ?,
+                wod_description= ?,
+                extras_description = ?
+            WHERE id = ?"""
+    try:
+        db.execute(
+            sql,
+            [workout_date,
+             warmup_description,
+             workout_description,
+             extras_description,
+             workout_id]
+             )
+        print(f"workout changed, workout ID: {workout_id}")
+        return workout_id
+    except sqlite3.Error as e:
+        print(f"Error updating workout: {e}")
+        return None
