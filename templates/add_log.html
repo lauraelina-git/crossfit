@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>New Training Log</title>
+</head>
+
+<body>
+  <h1>Create a new training log</h1>
+
+  {% if selected_wod %}
+    <h3>WOD Details</h3>
+
+    <p><strong>Warmup:</strong> {{ selected_wod.warmup_description }}</p>
+    <p><strong>WOD:</strong> {{ selected_wod.wod_description }}</p>
+    <p><strong>Extras:</strong> {{ selected_wod.extras_description }}</p>
+
+  <form action="/new_log" method="post">
+    <input type="hidden" name="workout_id" value="{{ selected_wod['id'] }}">
+    <p>
+        Date: <br>
+        <input type="date" name="log_date" required>
+    </p>
+    <p>
+        Your notes: <br>
+        <textarea name="log_notes" rows="5" cols="50" required></textarea>
+    </p>
+    <input type="submit" name="save_log" value="Save Log">
+  </form>
+  {% endif %}
+
+  <form action="/" method="get" style="margin-top:10px;">
+    <input type="submit" value="Cancel">
+  </form>
+</body>
+</html>

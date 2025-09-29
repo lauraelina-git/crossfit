@@ -72,3 +72,13 @@ def edit_workout(
     except sqlite3.Error as e:
         print(f"Error updating workout: {e}")
         return None
+
+def find_workouts(query):
+    """Find workouts that have the query in their content"""
+    sql="""SELECT id, workout_date
+            FROM workouts
+            WHERE wod_description LIKE ?
+            ORDER by workout_date DESC"""
+
+    result=db.query(sql,["%"+query+"%"])
+    return result

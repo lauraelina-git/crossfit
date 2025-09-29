@@ -93,6 +93,47 @@ def edit_log(log_id):
 
     return render_template("edit_log.html", log=training_log)
 
+@app.route("/remove_log/<int:log_id>", methods=["GET","POST"])
+def remove_log(log_id):
+    """Remove a training log"""
+    if "user_id" not in session:
+        return redirect("/login")
+    user_id = session["user_id"]
+
+    if request.method == "GET":
+        current_log=logs.list_log(log_id)
+        return render_template("remove_log.html", log=current_log)
+
+    if request.method =="POST":
+        logs.remove_log(log_id, user_id)
+
+    return redirect("/")
+
+@app.route("/add_log/<int:workout_id>", methods=["GET", "POST"])
+def add_log(workout_id):
+    """Add a training log directly from the workout description"""
+    if "user_id" not in session:
+        return redirect("/login")
+
+    selected_wod = workouts.list_workout(workout_id)
+    if not selected_wod:
+        return "Workout not found", 404
+
+    if request.method == "POST":
+        log_notes = request.form.get("log_notes")
+        log_date = request.form.get("log_date")
+        user_id = session["user_id"]
+
+        if log_notes and log_date:
+            log_id = logs.add_log(log_date, log_notes, user_id, workout_id)
+            if log_id:
+                return redirect("/")
+        else:
+            error = "Missing required fields."
+            return render_template("add_log.html", selected_wod=selected_wod, error=error)
+
+    return render_template("add_log.html", selected_wod=selected_wod)
+
 @app.route("/new_workout")
 def new_workout():
     """Register a new workout"""
@@ -164,23 +205,21 @@ def edit_workout(workout_id):
 
     return render_template("edit_workout.html", workout=wod)
 
+@app.route("/find_workout")
+def find_workout():
+    """Find workout"""
+    results=[]
+    query=request.args.get("query")
+    if query:
+        results=workouts.find_workouts(query)
+    else:
+        query=""
 
-@app.route("/remove_log/<int:log_id>", methods=["GET","POST"])
-def remove_log(log_id):
-    """Remove a training log"""
-    if "user_id" not in session:
-        return redirect("/login")
-    user_id = session["user_id"]
-
-    if request.method == "GET":
-        current_log=logs.list_log(log_id)
-        return render_template("remove_log.html", log=current_log)
-
-    if request.method =="POST":
-        logs.remove_log(log_id, user_id)
-
-    return redirect("/")
-
+    return render_template(
+        "find_workout.html",
+        query=query,
+        results=results
+    )
 
 @app.route("/register")
 def register():

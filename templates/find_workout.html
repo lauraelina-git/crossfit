@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Find workout</title>
+</head>
+
+<body>
+  <h1>Search for a WOD</h1>
+  <form action="/find_workout" method="get">
+    <p>
+      Keyword: <input type="text" name="query" value= "{{ query }}">
+    </p>
+    <input type="submit" value="Search">
+  </form>
+  <p>  </p>
+  <form action="/" method="get">  
+    <input type="submit" value="Cancel" />
+  </form>
+
+  {% if query %}
+  <h2>Workouts:</h2>
+  <ul>
+    {% for result in results %}
+    <li><a href="/workout/{{ result.id }}">WOD {{ result.workout_date }}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</body>
+</html>
