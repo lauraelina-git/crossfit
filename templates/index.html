@@ -8,7 +8,7 @@
 <body>
   <h1>My crossfit workout diary</h1>
 
-  <h2>Workouts done by {{ session.username }}:</h2>
+  <h2>{{ session.username }}'s training logs:</h2>
   <ul>
     {% for log in logs %}
     <li><a href="/log/{{ log.id }}"> Training on {{ log.log_date }}: {{ log.log_text }} </a></li>

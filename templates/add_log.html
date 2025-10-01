@@ -16,13 +16,11 @@
 
   <form action="/new_log" method="post">
     <input type="hidden" name="workout_id" value="{{ selected_wod['id'] }}">
-    <p>
-        Date: <br>
+    <p><strong>Date I did this WOD: </strong><br>
         <input type="date" name="log_date" required>
     </p>
-    <p>
-        Your notes: <br>
-        <textarea name="log_notes" rows="5" cols="50" required></textarea>
+    <p> <strong>Notes and Results: </strong><br>
+        <textarea name="log_notes" rows="5" cols="50" maxlength="150" wrap="hard"required></textarea>
     </p>
     <input type="submit" name="save_log" value="Save Log">
   </form>

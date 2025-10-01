@@ -15,24 +15,23 @@
   <form action="/create_workout" method="post" style="display:inline-block">
     <p>
       WOD date: <br />
-      <input type="date" id="pvm" name="workout_date">
+      <input type="date" id="pvm" name="workout_date" required>
     </p>
     <p>
       Description of the warm up: <br />
-      <textarea name="warmup_description" rows="8" cols="80"></textarea>
+      <textarea name="warmup_description" rows="8" cols="80" maxlength="300" wrap="hard"></textarea>
     </p>
     <p>
       Description of the WOD: <br />
-      <textarea name="wod_description" rows="15" cols="80"></textarea>
+      <textarea name="wod_description" rows="15" cols="80" maxlength="300" wrap="hard" required></textarea>
     </p>
     <p>
       Description of the extras <br />
-      <textarea name="extras_description" rows="8" cols="80"></textarea>
+      <textarea name="extras_description" rows="8" cols="80" maxlength="300" wrap="hard"></textarea>
     </p>
-    <input type="submit" value="Create workout" />
+    <input type="submit" value="Create workout"style=" margin-bottom: 10px;" />
   </form>
   <form action="/" method="get">
-  
     <input type="submit" value="Cancel" />
   </form>
 

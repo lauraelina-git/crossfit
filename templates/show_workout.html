@@ -7,26 +7,20 @@
 
 <body>
   <h1> Workout of the Day for {{workout.workout_date}}</h1>
-  <p> 
-    {{ workout.warmup_description }}
-  </p> 
-  <p> 
-    {{ workout.wod_description }}
-  </p> 
-  <p> 
-    {{ workout.extras_description }}
-  </p> 
+  <p><strong>Warm up:</strong>{{ workout.warmup_description }}</p> 
+  <p><strong>WOD:</strong>{{ workout.wod_description }}</p> 
+  <p><strong>Extras:</strong>{{ workout.extras_description }}</p> 
   <p>
     <a href="/"> Back to diary</a>
   </p>
+  {% if session.is_coach==1 %}
   <p>
     <a href="/edit_workout/{{ workout.id }}"> Edit Workout </a>
   </p>
+  {% endif %}
     <p>
     <a href="/add_log/{{ workout.id }}"> Add this workout to the training log </a>
   </p>
-
-
 </body>
 
 </html>

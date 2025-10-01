@@ -1,8 +1,9 @@
 """Application to create and log Crossfit "Workouts of the Day" (WOD)"""
 
 import sqlite3
+from functools import wraps
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import db
@@ -12,11 +13,19 @@ import logs
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
 
+def login_required(f):
+    """check whether the user is logged in"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route("/")
+@login_required
 def index():
     """Front-page view"""
-    if "user_id" not in session:
-        return redirect("/login")
     user_workoutlist= workouts.list_workouts(user_id=session["user_id"])
     workout_list= workouts.list_workouts()
     user_logs=logs.list_logs(user_id=session["user_id"])
@@ -28,11 +37,9 @@ def index():
         )
 
 @app.route("/new_log", methods=["GET", "POST"])
+@login_required
 def new_log():
     """Create a new log"""
-    if "user_id" not in session:
-        return redirect("/login")
-
     all_wods = workouts.list_workouts()
     selected_wod = None
 
@@ -57,10 +64,9 @@ def new_log():
     return render_template("new_log.html", wods=all_wods, selected_wod=selected_wod)
 
 @app.route("/log/<int:log_id>")
+@login_required
 def show_log(log_id):
     """Showing the user's trainging logs"""
-    if "user_id" not in session:
-        return redirect("/login")
 
     training_log = logs.list_log(int(log_id))
     if not training_log:
@@ -69,10 +75,9 @@ def show_log(log_id):
     return render_template("show_log.html", log=training_log)
 
 @app.route("/edit_log/<int:log_id>", methods=["GET","POST"])
+@login_required
 def edit_log(log_id):
     """Editing the user's logs"""
-    if "user_id" not in session:
-        return redirect("/login")
 
     training_log = logs.list_log(log_id)
     if not training_log:
@@ -94,10 +99,10 @@ def edit_log(log_id):
     return render_template("edit_log.html", log=training_log)
 
 @app.route("/remove_log/<int:log_id>", methods=["GET","POST"])
+@login_required
 def remove_log(log_id):
     """Remove a training log"""
-    if "user_id" not in session:
-        return redirect("/login")
+
     user_id = session["user_id"]
 
     if request.method == "GET":
@@ -110,10 +115,9 @@ def remove_log(log_id):
     return redirect("/")
 
 @app.route("/add_log/<int:workout_id>", methods=["GET", "POST"])
+@login_required
 def add_log(workout_id):
     """Add a training log directly from the workout description"""
-    if "user_id" not in session:
-        return redirect("/login")
 
     selected_wod = workouts.list_workout(workout_id)
     if not selected_wod:
@@ -123,6 +127,10 @@ def add_log(workout_id):
         log_notes = request.form.get("log_notes")
         log_date = request.form.get("log_date")
         user_id = session["user_id"]
+
+        if len(log_notes)>150:
+            error = "Too much text added to notes"
+            return render_template("add_log.html", selected_wod=selected_wod, error=error)
 
         if log_notes and log_date:
             log_id = logs.add_log(log_date, log_notes, user_id, workout_id)
@@ -135,11 +143,13 @@ def add_log(workout_id):
     return render_template("add_log.html", selected_wod=selected_wod)
 
 @app.route("/new_workout")
+@login_required
 def new_workout():
     """Register a new workout"""
     return render_template("new_workout.html")
 
-@app.route("/create_workout", methods=["POST"])
+@app.route("/create_workout", methods=["GET","POST"])
+@login_required
 def create_workout():
     """Create workout"""
     wod_date=request.form["workout_date"]
@@ -147,6 +157,11 @@ def create_workout():
     wod_description=request.form["wod_description"]
     extras_description=request.form["extras_description"]
     user_id=session["user_id"]
+
+    if len(warmup_description)>300 or len(wod_description)>300 or len(extras_description)>300:
+        return render_template(
+            "new_workout.html", 
+            error="Too long description in one of the fields")
 
     if not wod_date or not wod_description:
         return render_template(
@@ -157,10 +172,9 @@ def create_workout():
     return redirect("/")
 
 @app.route("/workout/<int:workout_id>")
+@login_required
 def show_workout(workout_id):
     """Showing the workout details"""
-    if "user_id" not in session:
-        return redirect("/login")
 
     wod = workouts.list_workout(int(workout_id))
     if not wod:
@@ -169,11 +183,9 @@ def show_workout(workout_id):
     return render_template("show_workout.html", workout=wod)
 
 @app.route("/edit_workout/<int:workout_id>", methods=["GET","POST"])
+@login_required
 def edit_workout(workout_id):
     """Edit an existing workout (coaches only)"""
-
-    if "user_id" not in session:
-        return redirect("/login")
 
     if session.get("is_coach") != 1:
         return "Unauthorized: only coaches can edit workouts", 403
@@ -196,18 +208,19 @@ def edit_workout(workout_id):
                 extras_description,
                 workout_id
                 )
-
+            return redirect(f"/workout/{workout_id}")
         return render_template(
-            "edit_workout.html",
-            workout=wod,
-            error="Date and workout description required"
-            )
-
+                "edit_workout.html",
+                workout=wod,
+                error="Date and workout description required"
+                )
     return render_template("edit_workout.html", workout=wod)
 
 @app.route("/find_workout")
+@login_required
 def find_workout():
     """Find workout"""
+
     results=[]
     query=request.args.get("query")
     if query:
@@ -280,6 +293,8 @@ def login():
 @app.route("/logout")
 def logout():
     """Logout from the application and delete the session"""
+    if "user_id" not in session:
+        return redirect("/login")
     del session["user_id"]
     del session["username"]
     return redirect("/")
