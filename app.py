@@ -171,16 +171,29 @@ def create_workout():
     workouts.add_workout(wod_date,warmup_description,wod_description,extras_description,user_id)
     return redirect("/")
 
-@app.route("/workout/<int:workout_id>")
+@app.route("/workout/<int:workout_id>", methods=["GET", "POST"])
 @login_required
 def show_workout(workout_id):
     """Showing the workout details"""
 
     wod = workouts.list_workout(int(workout_id))
+    results=workouts.list_results(int(workout_id))
     if not wod:
         return "Workout not found", 404
 
-    return render_template("show_workout.html", workout=wod)
+    if request.method == "POST":
+        comment_text = request.form.get("comment_text")
+        if comment_text:
+            workouts.add_comment(workout_id, session["user_id"], comment_text)
+            return redirect(f"/workout/{workout_id}")
+
+    comments = workouts.list_comments(workout_id)
+    return render_template(
+            "show_workout.html",
+            workout=wod,
+            results=results,
+            comments=comments
+            )
 
 @app.route("/edit_workout/<int:workout_id>", methods=["GET","POST"])
 @login_required

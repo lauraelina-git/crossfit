@@ -7,9 +7,44 @@
 
 <body>
   <h1> Workout of the Day for {{workout.workout_date}}</h1>
-  <p><strong>Warm up:</strong>{{ workout.warmup_description }}</p> 
-  <p><strong>WOD:</strong>{{ workout.wod_description }}</p> 
-  <p><strong>Extras:</strong>{{ workout.extras_description }}</p> 
+  <p><strong>Warm up: </strong>{{ workout.warmup_description }}</p> 
+  <p><strong>WOD: </strong>{{ workout.wod_description }}</p> 
+  <p><strong>Extras: </strong>{{ workout.extras_description }}</p> 
+  
+  {% for result in results %}
+    {% if result.user_id == session.user_id %}
+      <p><strong>My results: </strong> {{ result.log_text }} ({{ result.log_date }})</p>
+    {% endif %}
+  {% endfor %}
+
+  {% if results %}
+    <p><strong>All athletes that have done this WOD:</strong></p>
+      <ul>
+        {% for result in results %}
+          <li>{{ result.username }}: {{ result.log_text}}</li>
+        {% endfor %}
+      </ul>
+    <p>
+  {% endif %}
+
+  <h3>Comments about the WOD</h3>
+    {% if comments %}
+      <ul>
+        {% for comment in comments %}
+        <li>
+          <strong>{{ comment.username }}</strong>: {{ comment.comment_text }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+      <p>No comments yet. Be the first one to comment!</p>
+    {% endif %}
+
+<form method="post" action="/workout/{{ workout.id }}">
+  <textarea name="comment_text" rows="3" cols="40" placeholder="Write your comment"maxlength="150" wrap="hard"></textarea><br>
+  <input type="submit" value="Add comment"style=" margin-bottom: 10px;" />
+</form>
+
   <p>
     <a href="/"> Back to diary</a>
   </p>

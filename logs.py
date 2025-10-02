@@ -31,14 +31,16 @@ def list_logs(user_id=None):
                  ORDER BY log_date DESC"""
         return db.query(sql)
 
-    sql = """SELECT id,
-                    log_date,
-                    log_text,
-                    user_id,
-                    workout_id
-             FROM logs
-             WHERE user_id = ?
-             ORDER BY log_date DESC"""
+    sql = """SELECT l.id,
+                    l.log_date,
+                    l.log_text,
+                    l.workout_id,
+                    w.workout_date
+            FROM logs l
+            JOIN workouts w ON l.workout_id = w.id
+            WHERE l.user_id = ?
+            ORDER BY l.log_date DESC
+            """
     return db.query(sql, [user_id])
 
 def list_log(log_id):
@@ -58,7 +60,6 @@ def list_log(log_id):
             JOIN workouts w ON l.workout_id=w.id
             WHERE l.id=?"""
     return db.query(sql, [log_id])[0]
-
 
 def update_log(log_id, log_date, log_text, user_id):
     """Update an existing log entry if it belongs to the given user."""

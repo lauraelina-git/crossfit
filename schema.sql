@@ -21,3 +21,10 @@ CREATE TABLE logs (
     user_id INTEGER NOT NULL REFERENCES users,
     workout_id INTEGER NOT NULL REFERENCES workouts
 );
+
+CREATE TABLE comments (
+    id INTEGER PRIMARY KEY,
+    workout_id INTEGER NOT NULL REFERENCES workouts,
+    user_id INTEGER NOT NULL REFERENCES users,
+    comment_text TEXT NOT NULL
+);

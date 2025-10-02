@@ -11,7 +11,7 @@
   <h2>{{ session.username }}'s training logs:</h2>
   <ul>
     {% for log in logs %}
-    <li><a href="/log/{{ log.id }}"> Training on {{ log.log_date }}: {{ log.log_text }} </a></li>
+    <li>Training on {{ log.log_date }}:<a href="/workout/{{ log.workout_id }}"> WOD {{ log.workout_date }}</a></li>
     {% endfor %}
   </ul>
   {% if session.is_coach==1 %}

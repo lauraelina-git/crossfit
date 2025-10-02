@@ -53,11 +53,11 @@ def edit_workout(
         ):
     """Update an existing workout"""
     sql = """UPDATE workouts
-            SET workout_date = ?,
+             SET workout_date = ?,
                 warmup_description = ?,
                 wod_description= ?,
                 extras_description = ?
-            WHERE id = ?"""
+             WHERE id = ?"""
     try:
         db.execute(
             sql,
@@ -75,10 +75,43 @@ def edit_workout(
 
 def find_workouts(query):
     """Find workouts that have the query in their content"""
-    sql="""SELECT id, workout_date
-            FROM workouts
-            WHERE wod_description LIKE ?
-            ORDER by workout_date DESC"""
+    sql = """SELECT id, workout_date
+             FROM workouts
+             WHERE wod_description LIKE ?
+             ORDER by workout_date DESC"""
 
     result=db.query(sql,["%"+query+"%"])
     return result
+
+def list_results(workout_id):
+    """Return all usernames and results for users who have logged this workout"""
+    sql = """SELECT u.username,
+                    l.user_id,
+                    l.log_date,
+                    l.log_text
+             FROM logs l
+             JOIN users u ON l.user_id = u.id
+             WHERE l.workout_id = ?
+             ORDER BY l.log_date DESC"""
+    return db.query(sql, [workout_id])
+
+
+def add_comment(workout_id, user_id, comment_text):
+    """Add a comment to a workout"""
+    sql = """INSERT INTO comments (
+                workout_id,
+                user_id,
+                comment_text
+                )
+             VALUES (?, ?, ?)"""
+    return db.execute(sql, [workout_id, user_id, comment_text])
+
+def list_comments(workout_id):
+    """List the comments for the workout given by users"""
+    sql = """SELECT c.id,
+                    c.comment_text,
+                    u.username
+             FROM comments c
+             JOIN users u ON c.user_id = u.id
+             WHERE c.workout_id = ?"""
+    return db.query(sql, [workout_id])
