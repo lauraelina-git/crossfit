@@ -90,3 +90,56 @@ def remove_log(log_id, user_id):
     except sqlite3.Error as e:
         print(f"Error deleting log: {e}")
         return False
+
+def list_results(workout_id, user_id=None):
+    """list the results of the workout"""
+    sql = """SELECT
+                logs.id,
+                logs.log_date,
+                logs.log_text,
+                logs.user_id,
+                users.username,
+                COUNT(likes.id) AS likes_count
+             FROM logs
+             LEFT JOIN users ON logs.user_id = users.id
+             LEFT JOIN likes ON logs.id = likes.log_id
+             WHERE logs.workout_id = ?
+             GROUP BY logs.id
+             ORDER BY logs.log_date DESC"""
+    results = db.query(sql, [workout_id])
+    results = [dict(r) for r in results]
+
+    if user_id:
+        for r in results:
+            sql = """SELECT id
+                        FROM likes
+                        WHERE log_id = ? 
+                        AND user_id = ?"""
+
+            liked= db.query(sql, [r["id"], user_id])
+            r["user_has_liked"] = bool(liked)
+    return results
+
+def check_likes(log_id, user_id):
+    """Check if the user has liked the result"""
+    sql = """SELECT id
+             FROM likes 
+             WHERE log_id = ?
+             AND user_id = ?"""
+    return db.query(sql, [log_id, user_id])
+
+def unlike_log(log_id, user_id):
+    """Unlike the result"""
+    sql = """DELETE FROM likes
+             WHERE log_id = ?
+             AND user_id = ?"""
+    db.execute(sql, [log_id, user_id])
+
+
+def like_log(log_id, user_id):
+    """Like the result"""
+    sql = """INSERT INTO likes (
+                log_id,
+                user_id) 
+             VALUES (?, ?)"""
+    db.execute(sql, [log_id, user_id])

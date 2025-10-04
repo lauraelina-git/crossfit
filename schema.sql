@@ -28,3 +28,9 @@ CREATE TABLE comments (
     user_id INTEGER NOT NULL REFERENCES users,
     comment_text TEXT NOT NULL
 );
+
+CREATE TABLE likes (
+    id INTEGER PRIMARY KEY, 
+    log_id INTEGER NOT NULL REFERENCES logs, 
+    user_id INTEGER NOT NULL REFERENCES users
+);

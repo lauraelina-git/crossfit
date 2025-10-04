@@ -3,7 +3,7 @@
 import sqlite3
 from functools import wraps
 from flask import Flask
-from flask import redirect, render_template, request, session, url_for
+from flask import flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import db
@@ -171,13 +171,14 @@ def create_workout():
     workouts.add_workout(wod_date,warmup_description,wod_description,extras_description,user_id)
     return redirect("/")
 
+
 @app.route("/workout/<int:workout_id>", methods=["GET", "POST"])
 @login_required
 def show_workout(workout_id):
     """Showing the workout details"""
-
     wod = workouts.list_workout(int(workout_id))
-    results=workouts.list_results(int(workout_id))
+    results=logs.list_results(workout_id, session.get("user_id"))
+    comments = workouts.list_comments(workout_id)
     if not wod:
         return "Workout not found", 404
 
@@ -185,9 +186,9 @@ def show_workout(workout_id):
         comment_text = request.form.get("comment_text")
         if comment_text:
             workouts.add_comment(workout_id, session["user_id"], comment_text)
+            flash("Comment added")
             return redirect(f"/workout/{workout_id}")
 
-    comments = workouts.list_comments(workout_id)
     return render_template(
             "show_workout.html",
             workout=wod,
@@ -246,6 +247,19 @@ def find_workout():
         query=query,
         results=results
     )
+
+@app.route("/like_result/<int:log_id>", methods=["POST"])
+@login_required
+def like_result(log_id):
+    """Like or unlike a log entry"""
+    user_id = session["user_id"]
+    existing_like = logs.check_likes(log_id, user_id)
+
+    if existing_like:
+        logs.unlike_log(log_id, user_id)
+    else:
+        logs.like_log(log_id, user_id)
+    return redirect(request.referrer)
 
 @app.route("/register")
 def register():

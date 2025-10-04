@@ -6,6 +6,15 @@
 </head>
 
 <body>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="flash-messages">
+        {% for message in messages %}
+          {{ message }}
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
   <h1> Workout of the Day for {{workout.workout_date}}</h1>
   <p><strong>Warm up: </strong>{{ workout.warmup_description }}</p> 
   <p><strong>WOD: </strong>{{ workout.wod_description }}</p> 
@@ -19,12 +28,21 @@
 
   {% if results %}
     <p><strong>All athletes that have done this WOD:</strong></p>
-      <ul>
-        {% for result in results %}
-          <li>{{ result.username }}: {{ result.log_text}}</li>
-        {% endfor %}
-      </ul>
-    <p>
+    <ul>
+      {% for result in results %}
+        <li>
+          {{ result.username }}: {{ result.log_text }} 
+          <span>({{ result.likes_count }} likes)</span>
+          <form action="{{ url_for('like_result', log_id=result.id) }}" method="post">
+            {% if result.user_has_liked %}
+              <button type="submit">Unlike</button>
+            {% else %}
+            <button type="submit">Like</button>
+            {% endif %}  
+          </form>
+        </li>   
+      {% endfor %}
+    </ul>
   {% endif %}
 
   <h3>Comments about the WOD</h3>

@@ -83,19 +83,6 @@ def find_workouts(query):
     result=db.query(sql,["%"+query+"%"])
     return result
 
-def list_results(workout_id):
-    """Return all usernames and results for users who have logged this workout"""
-    sql = """SELECT u.username,
-                    l.user_id,
-                    l.log_date,
-                    l.log_text
-             FROM logs l
-             JOIN users u ON l.user_id = u.id
-             WHERE l.workout_id = ?
-             ORDER BY l.log_date DESC"""
-    return db.query(sql, [workout_id])
-
-
 def add_comment(workout_id, user_id, comment_text):
     """Add a comment to a workout"""
     sql = """INSERT INTO comments (
