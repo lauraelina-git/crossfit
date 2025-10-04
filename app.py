@@ -157,20 +157,26 @@ def create_workout():
     wod_description=request.form["wod_description"]
     extras_description=request.form["extras_description"]
     user_id=session["user_id"]
+    programming=request.form.get("week")
 
     if len(warmup_description)>300 or len(wod_description)>300 or len(extras_description)>300:
         return render_template(
             "new_workout.html", 
             error="Too long description in one of the fields")
 
-    if not wod_date or not wod_description:
+    if not wod_date or not wod_description or not programming:
         return render_template(
             "new_workout.html", 
-            error="WOD date and description of the WOD are mandatory")
+            error="WOD date, description and programming week of the WOD are mandatory")
 
-    workouts.add_workout(wod_date,warmup_description,wod_description,extras_description,user_id)
+    workouts.add_workout(
+        wod_date,
+        warmup_description,
+        wod_description,
+        extras_description,
+        user_id,
+        programming)
     return redirect("/")
-
 
 @app.route("/workout/<int:workout_id>", methods=["GET", "POST"])
 @login_required
@@ -179,6 +185,7 @@ def show_workout(workout_id):
     wod = workouts.list_workout(int(workout_id))
     results=logs.list_results(workout_id, session.get("user_id"))
     comments = workouts.list_comments(workout_id)
+    programming = workouts.get_programming(workout_id)
     if not wod:
         return "Workout not found", 404
 
@@ -191,9 +198,10 @@ def show_workout(workout_id):
 
     return render_template(
             "show_workout.html",
-            workout=wod,
-            results=results,
-            comments=comments
+            workout = wod,
+            results = results,
+            comments = comments,
+            programming = programming
             )
 
 @app.route("/edit_workout/<int:workout_id>", methods=["GET","POST"])

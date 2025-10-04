@@ -2,9 +2,14 @@
 import sqlite3
 import db
 
-def add_workout(workout_date, warmup_description, wod_description, extras_description, user_id):
+def add_workout(workout_date,
+                warmup_description,
+                wod_description,
+                extras_description,
+                user_id,
+                programming_week):
     """Insert a new workout into the database."""
-    sql= """INSERT INTO workouts (
+    sql = """INSERT INTO workouts (
                 workout_date,
                 warmup_description,
                 wod_description,
@@ -12,6 +17,14 @@ def add_workout(workout_date, warmup_description, wod_description, extras_descri
                 user_id
                 ) VALUES (?,?,?,?,?)"""
     db.execute(sql,[workout_date, warmup_description, wod_description, extras_description, user_id])
+    workout_id=db.last_insert_id()
+
+    sql = """INSERT INTO programming(
+                workout_id,
+                programming_week
+                ) VALUES (?,?)"""
+    db.execute(sql,[workout_id, programming_week])
+
 
 def list_workouts(user_id=None):
     """Return all workouts or workouts for a specific user, ordered by date descending."""
@@ -102,3 +115,11 @@ def list_comments(workout_id):
              JOIN users u ON c.user_id = u.id
              WHERE c.workout_id = ?"""
     return db.query(sql, [workout_id])
+
+def get_programming(workout_id):
+    """Return the programming week"""
+    sql = """SELECT programming_week
+            FROM programming 
+            WHERE workout_id = ?"""
+    result = db.query(sql, [workout_id])
+    return result[0] if result else None

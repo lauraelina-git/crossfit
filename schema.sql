@@ -34,3 +34,9 @@ CREATE TABLE likes (
     log_id INTEGER NOT NULL REFERENCES logs, 
     user_id INTEGER NOT NULL REFERENCES users
 );
+
+CREATE TABLE programming (
+    id INTEGER PRIMARY KEY,
+    workout_id INTEGER NOT NULL REFERENCES workouts,
+    programming_week TEXT
+);
