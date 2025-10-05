@@ -22,7 +22,8 @@
     <p> <strong>Notes and Results: </strong><br>
         <textarea name="log_notes" rows="5" cols="50" maxlength="150" wrap="hard"required></textarea>
     </p>
-    <input type="submit" name="save_log" value="Save Log">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+    <input type="submit" name="save_log" value="Save Log"/>
   </form>
   {% endif %}
 

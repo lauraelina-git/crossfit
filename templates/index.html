@@ -9,7 +9,7 @@
   <h1>My crossfit workout diary</h1>
 
   <h2>{{ session.username }}'s training logs:</h2>
-  <p>{{ wod_count }} WODs completed, last training on {{ last_training }}</p>
+  <p>{{ wod_count }} WODs completed, last training on: {{ last_training }}</p>
   <ul>
     {% for log in logs %}
     <li>Training on {{ log.log_date }}:

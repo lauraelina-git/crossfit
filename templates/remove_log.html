@@ -15,10 +15,11 @@
     <p>Results: {{ log.log_text }}</p>
 
     <form action="/remove_log/{{ log.id }}" method="post">
-      <input type="submit" name="remove" value="Remove Log">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+      <input type="submit" name="remove" value="Remove Log"/>
     </form>
   <form action="/" method="get" style="margin-top:10px;">
-    <input type="submit" name="cancel" value="Cancel">
+    <input type="submit" name="cancel" value="Cancel"/>
   </form>
 </body>
 </html>

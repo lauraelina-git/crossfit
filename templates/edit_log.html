@@ -22,6 +22,7 @@
         Your notes: <br>
         <textarea name="log_notes" rows="5" cols="50" wrap="hard" required>{{ log.log_text }}</textarea>
       </p>
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
       <input type="submit" value="Save Log">
   </form>
 

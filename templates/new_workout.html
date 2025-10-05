@@ -39,6 +39,7 @@
         <option value = "Deload">Deload</option>
       </select>
     </p>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
     <input type="submit" value="Create workout"style=" margin-bottom: 10px;" />
   </form>
   <form action="/" method="get">

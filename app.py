@@ -4,14 +4,22 @@ import sqlite3
 from functools import wraps
 from flask import Flask
 from flask import flash, redirect, render_template, request, session, url_for
+from flask import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import db
 import workouts
 import logs
+import secrets
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
+
+def check_csrf():
+    if "csrf_token" not in request.form:
+        abort(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
 
 def login_required(f):
     """check whether the user is logged in"""
@@ -51,6 +59,7 @@ def new_log():
     selected_wod = None
 
     if request.method == "POST":
+        check_csrf()
         if "select_wod" in request.form:
             wod_id = request.form.get("workout_id")
             if wod_id:
@@ -85,7 +94,6 @@ def show_log(log_id):
 @login_required
 def edit_log(log_id):
     """Editing the user's logs"""
-
     training_log = logs.list_log(log_id)
     if not training_log:
         return "Log not found", 404
@@ -94,6 +102,7 @@ def edit_log(log_id):
         return "Unauthorized to change the log", 403
 
     if request.method == "POST":
+        check_csrf()
         log_date = request.form.get("log_date")
         log_text = request.form.get("log_notes")
 
@@ -109,7 +118,6 @@ def edit_log(log_id):
 @login_required
 def remove_log(log_id):
     """Remove a training log"""
-
     user_id = session["user_id"]
 
     if request.method == "GET":
@@ -117,6 +125,7 @@ def remove_log(log_id):
         return render_template("remove_log.html", log=current_log)
 
     if request.method =="POST":
+        check_csrf()
         logs.remove_log(log_id, user_id)
 
     return redirect("/")
@@ -125,12 +134,12 @@ def remove_log(log_id):
 @login_required
 def add_log(workout_id):
     """Add a training log directly from the workout description"""
-
     selected_wod = workouts.list_workout(workout_id)
     if not selected_wod:
         return "Workout not found", 404
 
     if request.method == "POST":
+        check_csrf()
         log_notes = request.form.get("log_notes")
         log_date = request.form.get("log_date")
         user_id = session["user_id"]
@@ -159,6 +168,10 @@ def new_workout():
 @login_required
 def create_workout():
     """Create workout"""
+    if request.method == "GET":
+        return render_template("new_workout.html")
+    
+    check_csrf()
     wod_date=request.form["workout_date"]
     warmup_description=request.form["warmup_description"]
     wod_description=request.form["wod_description"]
@@ -215,7 +228,6 @@ def show_workout(workout_id):
 @login_required
 def edit_workout(workout_id):
     """Edit an existing workout (coaches only)"""
-
     if session.get("is_coach") != 1:
         return "Unauthorized: only coaches can edit workouts", 403
 
@@ -224,6 +236,7 @@ def edit_workout(workout_id):
         return "Workout not found", 404
 
     if request.method == "POST":
+        check_csrf()
         wod_date=request.form.get("workout_date")
         warmup_description=request.form.get("warmup_description")
         wod_description=request.form.get("wod_description")
@@ -291,7 +304,8 @@ def create():
     password2 = request.form["password2"]
 
     if password1 != password2:
-        return render_template("register.html", error="ERROR: The passwords must be the same")
+        return render_template("register.html",
+                error="ERROR: The passwords must be the same")
 
 
     is_coach = 1 if request.form.get("is_coach") else 0
@@ -319,7 +333,8 @@ def login():
         result = db.query(sql, [username])
 
         if not result:
-            return render_template("login.html", error="Wrong username or password")
+            return render_template("login.html",
+                    error="Wrong username or password")
 
         user=result[0]
         user_id = user["id"]
@@ -328,11 +343,13 @@ def login():
 
         if check_password_hash(password_hash, password):
             session["user_id"]= user_id
+            session["csrf_token"] = secrets.token_hex(16)
             session["username"] = username
             session["is_coach"] = is_coach
             return redirect("/")
 
-        return render_template("login.html", error="Wrong username or password")
+        return render_template("login.html",
+                error="Wrong username or password")
 
 @app.route("/logout")
 def logout():
