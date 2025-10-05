@@ -9,9 +9,12 @@
   <h1>My crossfit workout diary</h1>
 
   <h2>{{ session.username }}'s training logs:</h2>
+  <p>{{ wod_count }} WODs completed, last training on {{ last_training }}</p>
   <ul>
     {% for log in logs %}
-    <li>Training on {{ log.log_date }}:<a href="/workout/{{ log.workout_id }}"> WOD {{ log.workout_date }}</a></li>
+    <li>Training on {{ log.log_date }}:
+      <a href="/workout/{{ log.workout_id }}"> WOD {{ log.workout_date }}</a>
+      <a href="/log/{{ log.id }}">(Edit/remove)</a></li>
     {% endfor %}
   </ul>
   {% if session.is_coach==1 %}

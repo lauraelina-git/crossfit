@@ -143,3 +143,16 @@ def like_log(log_id, user_id):
                 user_id) 
              VALUES (?, ?)"""
     db.execute(sql, [log_id, user_id])
+
+def log_summary(user_id):
+    """Return total number of logs and date of last training."""
+    sql = """SELECT
+            COUNT(id) AS wod_count,
+            MAX(log_date) AS last_training
+            FROM logs
+            WHERE user_id = ?"""
+
+    result = db.query(sql, [user_id])[0]
+    wod_count = result["wod_count"]
+    last_training = result["last_training"]
+    return wod_count, last_training

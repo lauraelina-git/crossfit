@@ -25,15 +25,22 @@ def login_required(f):
 @app.route("/")
 @login_required
 def index():
-    """Front-page view"""
+    """Front-page (Diary) view"""
     user_workoutlist= workouts.list_workouts(user_id=session["user_id"])
     workout_list= workouts.list_workouts()
     user_logs=logs.list_logs(user_id=session["user_id"])
+
+    wod_count, last_training = logs.log_summary(user_id=session["user_id"])
+    if not last_training:
+        last_training = "No logs yet"
+
     return render_template(
         "index.html",
         user_workouts = user_workoutlist,
         workouts = workout_list,
-        logs=user_logs
+        logs=user_logs,
+        wod_count=wod_count,
+        last_training=last_training
         )
 
 @app.route("/new_log", methods=["GET", "POST"])
