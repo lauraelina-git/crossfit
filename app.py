@@ -228,20 +228,22 @@ def edit_workout(workout_id):
         warmup_description=request.form.get("warmup_description")
         wod_description=request.form.get("wod_description")
         extras_description=request.form.get("extras_description")
+        programming=request.form.get("week")
 
-        if wod_date and wod_description:
+        if wod_date and wod_description and programming:
             workouts.edit_workout(
                 wod_date,
                 warmup_description,
                 wod_description,
                 extras_description,
-                workout_id
+                workout_id,
+                programming
                 )
             return redirect(f"/workout/{workout_id}")
         return render_template(
                 "edit_workout.html",
                 workout=wod,
-                error="Date and workout description required"
+                error="Date workout description and programming required"
                 )
     return render_template("edit_workout.html", workout=wod)
 

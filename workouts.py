@@ -19,11 +19,11 @@ def add_workout(workout_date,
     db.execute(sql,[workout_date, warmup_description, wod_description, extras_description, user_id])
     workout_id=db.last_insert_id()
 
-    sql = """INSERT INTO programming(
+    sql2 = """INSERT INTO programming(
                 workout_id,
                 programming_week
                 ) VALUES (?,?)"""
-    db.execute(sql,[workout_id, programming_week])
+    db.execute(sql2,[workout_id, programming_week])
 
 
 def list_workouts(user_id=None):
@@ -62,7 +62,8 @@ def edit_workout(
         warmup_description,
         workout_description,
         extras_description,
-        workout_id
+        workout_id,
+        programming_week
         ):
     """Update an existing workout"""
     sql = """UPDATE workouts
@@ -71,6 +72,9 @@ def edit_workout(
                 wod_description= ?,
                 extras_description = ?
              WHERE id = ?"""
+    sql2 = """UPDATE programming
+             SET programming_week = ?
+             WHERE workout_id = ?"""
     try:
         db.execute(
             sql,
@@ -80,7 +84,9 @@ def edit_workout(
              extras_description,
              workout_id]
              )
+        db.execute(sql2, [programming_week, workout_id])
         print(f"workout changed, workout ID: {workout_id}")
+
         return workout_id
     except sqlite3.Error as e:
         print(f"Error updating workout: {e}")
