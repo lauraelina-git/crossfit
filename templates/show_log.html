@@ -9,10 +9,10 @@
   <h1> {{log.username}}'s training log on {{log.log_date}}</h1>
   <h2> {{log.workout_date}} Workout of the Day </h2>
   
-  <p><strong>Warmup:</strong> {{ log.warmup_description }}</p> 
-  <p><strong>WOD:</strong> {{ log.wod_description }}</p> 
-  <p><strong>Extras:</strong> {{ log.extras_description }}</p>
-  <p><strong>Results:</strong> {{ log.log_text }}</p>
+  <p><strong>Warmup:</strong></br> {{ log.warmup_description | show_lines}}</p> 
+  <p><strong>WOD:</strong></br> {{ log.wod_description | show_lines}}</p> 
+  <p><strong>Extras:</strong></br> {{ log.extras_description | show_lines}}</p>
+  <p><strong>Results:</strong></br>{{ log.log_text | show_lines}}</p>
   <p>
     <a href="/"> Back to {{ log.username }}'s diary</a>
   </p>

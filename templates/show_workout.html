@@ -16,13 +16,19 @@
     {% endif %}
   {% endwith %}
   <h1> Workout of the Day for {{ workout.workout_date }} (Programming: {{ programming.programming_week }})</h1>
-  <p><strong>Warm up: </strong>{{ workout.warmup_description }}</p> 
-  <p><strong>WOD: </strong>{{ workout.wod_description }}</p> 
-  <p><strong>Extras: </strong>{{ workout.extras_description }}</p> 
+  <p><strong>Warm up: </strong></br>{{ workout.warmup_description | show_lines}}</p> 
+  <p><strong>WOD: </strong></br>{{ workout.wod_description | show_lines}}</p> 
+  <p><strong>Extras: </strong></br>{{ workout.extras_description | show_lines}}</p> 
+
+  {% if workout.workout_image %}
+    <img src="{{ url_for('static', filename='uploads/' + workout.workout_image) }}" alt="Workout Image" style="max-width: 80%; height: auto;">
+  {% else %}
+    <p>No image available for this workout.</p>
+  {% endif %}
   
   {% for result in results %}
     {% if result.user_id == session.user_id %}
-      <p><strong>My results: </strong> {{ result.log_text }} ({{ result.log_date }})</p>
+      <p><strong>My results ({{ result.log_date }}): </strong></br> {{ result.log_text | show_lines}} </p>
     {% endif %}
   {% endfor %}
 

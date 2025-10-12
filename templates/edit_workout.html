@@ -10,22 +10,22 @@
       <p style="color:red;">{{ error }}</p>
     {% endif %}
 
-  <form action="/edit_workout/{{ workout.id }}" method="post" style="display:inline-block">
+    <form action="/edit_workout/{{ workout.id }}" method="post"  enctype="multipart/form-data" style="display:inline-block">
     <p>
       WOD date: <br />
       <input type="date" id="pvm" name="workout_date" required>
     </p>
     <p>
       Description of the warm up: <br />
-      <textarea name="warmup_description" rows="8" cols="80" maxlength="300" wrap="hard"></textarea>
+      <textarea name="warmup_description" rows="8" cols="80" maxlength="300" wrap="hard">{{ workout.warmup_description }}</textarea>
     </p>
     <p>
       Description of the WOD: <br />
-      <textarea name="wod_description" rows="15" cols="80" maxlength="300" wrap="hard" required></textarea>
+      <textarea name="wod_description" rows="15" cols="80" maxlength="300" wrap="hard" required>{{ workout.wod_description }}</textarea>
     </p>
     <p>
       Description of the extras <br />
-      <textarea name="extras_description" rows="8" cols="80" maxlength="300" wrap="hard"></textarea>
+      <textarea name="extras_description" rows="8" cols="80" maxlength="300" wrap="hard">{{ workout.extras_description }}</textarea>
     </p>
     <p>
       Programming week:
@@ -37,6 +37,11 @@
         <option value = "Deload">Deload</option>
       </select>
     </p>
+    <p>
+      Upload image: <br />
+      <input type="file" name="workout_image" accept="image/*" style="margin-top: 10px;">
+    </p>
+
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
     <input type="submit" value="Save workout" /><br />
   </form>

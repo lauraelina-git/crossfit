@@ -2,24 +2,38 @@
 
 import sqlite3
 from functools import wraps
+import secrets
+import os
 from flask import Flask
 from flask import flash, redirect, render_template, request, session, url_for
 from flask import abort
 from werkzeug.security import check_password_hash, generate_password_hash
+import markupsafe
 import config
 import db
 import workouts
 import logs
-import secrets
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 def check_csrf():
+    """check csrf token validity"""
     if "csrf_token" not in request.form:
+        print("csrf token missing")
         abort(403)
     if request.form["csrf_token"] != session["csrf_token"]:
+        print("csrf token mismatch")
         abort(403)
+
+@app.template_filter('show_lines')
+def show_lines(text):
+    """Split text into lines for display."""
+    return markupsafe.Markup('<br>'.join(text.splitlines()))
 
 def login_required(f):
     """check whether the user is logged in"""
@@ -170,14 +184,22 @@ def create_workout():
     """Create workout"""
     if request.method == "GET":
         return render_template("new_workout.html")
-    
+
     check_csrf()
+
     wod_date=request.form["workout_date"]
     warmup_description=request.form["warmup_description"]
     wod_description=request.form["wod_description"]
     extras_description=request.form["extras_description"]
     user_id=session["user_id"]
     programming=request.form.get("week")
+    workout_image_file = None
+
+    if 'workout_image' in request.files:
+        file = request.files['workout_image']
+        if file and file.filename != '':
+            workout_image_file = file.filename
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], workout_image_file))
 
     if len(warmup_description)>300 or len(wod_description)>300 or len(extras_description)>300:
         return render_template(
@@ -195,7 +217,9 @@ def create_workout():
         wod_description,
         extras_description,
         user_id,
-        programming)
+        programming,
+        workout_image_file
+        )
     return redirect("/")
 
 @app.route("/workout/<int:workout_id>", methods=["GET", "POST"])
@@ -242,6 +266,13 @@ def edit_workout(workout_id):
         wod_description=request.form.get("wod_description")
         extras_description=request.form.get("extras_description")
         programming=request.form.get("week")
+        workout_image_file = wod['workout_image']
+
+        if 'workout_image' in request.files:
+            file = request.files['workout_image']
+            if file and file.filename != '':
+                workout_image_file = file.filename
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], workout_image_file))
 
         if wod_date and wod_description and programming:
             workouts.edit_workout(
@@ -249,6 +280,7 @@ def edit_workout(workout_id):
                 warmup_description,
                 wod_description,
                 extras_description,
+                workout_image_file,
                 workout_id,
                 programming
                 )

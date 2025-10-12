@@ -7,16 +7,27 @@ def add_workout(workout_date,
                 wod_description,
                 extras_description,
                 user_id,
-                programming_week):
+                programming_week,
+                workout_image):
     """Insert a new workout into the database."""
     sql = """INSERT INTO workouts (
                 workout_date,
                 warmup_description,
                 wod_description,
                 extras_description,
-                user_id
-                ) VALUES (?,?,?,?,?)"""
-    db.execute(sql,[workout_date, warmup_description, wod_description, extras_description, user_id])
+                user_id,
+                workout_image
+                ) VALUES (?,?,?,?,?,?)"""
+    print(f"Workout image filename before saving: {workout_image}")
+    db.execute(
+        sql,
+        [workout_date,
+        warmup_description,
+        wod_description,
+        extras_description,
+        user_id,
+        workout_image
+        ])
     workout_id=db.last_insert_id()
 
     sql2 = """INSERT INTO programming(
@@ -45,13 +56,14 @@ def list_workouts(user_id=None):
     return db.query(sql, [user_id])
 
 def list_workout(workout_id):
-    """Return a single workout including its id, date, creator and descriptions."""
+    """Return a single workout including its id, date, creator, descriptions and image."""
     sql = """SELECT workouts.id,
                     workouts.workout_date,
                     workouts.warmup_description,
                     workouts.wod_description,
                     workouts.extras_description,
-                    users.username
+                    users.username,
+                    workouts.workout_image
             FROM workouts, users
             WHERE workouts.user_id=users.id AND
             workouts.id=?"""
@@ -62,6 +74,7 @@ def edit_workout(
         warmup_description,
         workout_description,
         extras_description,
+        workout_image,
         workout_id,
         programming_week
         ):
@@ -70,11 +83,13 @@ def edit_workout(
              SET workout_date = ?,
                 warmup_description = ?,
                 wod_description= ?,
-                extras_description = ?
+                extras_description = ?,
+                workout_image = ?
              WHERE id = ?"""
     sql2 = """UPDATE programming
              SET programming_week = ?
              WHERE workout_id = ?"""
+
     try:
         db.execute(
             sql,
@@ -82,6 +97,7 @@ def edit_workout(
              warmup_description,
              workout_description,
              extras_description,
+             workout_image,
              workout_id]
              )
         db.execute(sql2, [programming_week, workout_id])

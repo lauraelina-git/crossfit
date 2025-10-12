@@ -4,10 +4,11 @@ A webtool to log crossfit workouts
 ## Application functions:
 * A user can be created
 * User can sign in to the application
-* User can be assigned 2 roles: a coach and an athlete
+* User can be assigned 2 roles: a coach and an athlete. 
+* By definition all users are athletes, but to have the coach priviledges, tick-box "coach" needs to be ticked upon registering.
 * Only Coaches can create WODs (Workout of the Day)
 * All coaches can edit workouts, both the ones they have created and the ones other coaches have created
-* There are 4 levels of the workouts (programming weeks 1/2/3 and) 
+* There are 4 levels of the workouts (programming weeks 1/2/3 and deload) 
 * Athletes and Coaches can choose any WOD created and add their own training log with the date they did the WOD
 * A training log can be added from the users diary "Create a new training log"
 * A training log can also be added from the workout's description using "Add this workout to the training log"

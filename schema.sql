@@ -11,32 +11,33 @@ CREATE TABLE workouts (
     warmup_description TEXT,
     wod_description TEXT,
     extras_description TEXT,
-    user_id INTEGER NOT NULL REFERENCES users
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    workout_image TEXT
 );
 
 CREATE TABLE logs (
     id INTEGER PRIMARY KEY,
     log_date DATE NOT NULL,
     log_text TEXT,
-    user_id INTEGER NOT NULL REFERENCES users,
-    workout_id INTEGER NOT NULL REFERENCES workouts
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    workout_id INTEGER NOT NULL REFERENCES workouts(id) ON DELETE CASCADE
 );
 
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
-    workout_id INTEGER NOT NULL REFERENCES workouts,
-    user_id INTEGER NOT NULL REFERENCES users,
+    workout_id INTEGER NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     comment_text TEXT NOT NULL
 );
 
 CREATE TABLE likes (
     id INTEGER PRIMARY KEY, 
-    log_id INTEGER NOT NULL REFERENCES logs, 
-    user_id INTEGER NOT NULL REFERENCES users
+    log_id INTEGER NOT NULL REFERENCES logs(id) ON DELETE CASCADE, 
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE programming (
     id INTEGER PRIMARY KEY,
-    workout_id INTEGER NOT NULL REFERENCES workouts,
+    workout_id INTEGER NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
     programming_week TEXT
 );

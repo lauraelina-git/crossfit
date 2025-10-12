@@ -12,7 +12,7 @@
   <p style="color:red;">{{ error }}</p>
   {% endif %}
 
-  <form action="/create_workout" method="post" style="display:inline-block">
+  <form action="/create_workout" method="post" enctype="multipart/form-data" style="display:inline-block">
     <p>
       WOD date: <br />
       <input type="date" id="pvm" name="workout_date" required>
@@ -38,6 +38,11 @@
         <option value = "Week 3">Week 3</option>
         <option value = "Deload">Deload</option>
       </select>
+    </p>
+
+    <p>
+      Upload image: <br />
+      <input type="file" name="workout_image" accept="image/*" style="margin-top: 10px;">
     </p>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
     <input type="submit" value="Create workout"style=" margin-bottom: 10px;" />

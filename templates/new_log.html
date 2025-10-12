@@ -26,9 +26,9 @@
   {% if selected_wod %}
     <h3>WOD Details</h3>
 
-    <p><strong>Warmup:</strong> {{ selected_wod.warmup_description }}</p>
-    <p><strong>WOD:</strong> {{ selected_wod.wod_description }}</p>
-    <p><strong>Extras:</strong> {{ selected_wod.extras_description }}</p>
+    <p><strong>Warmup:</strong> {{ selected_wod.warmup_description | show_lines }}</p>
+    <p><strong>WOD:</strong> {{ selected_wod.wod_description | show_lines }}</p>
+    <p><strong>Extras:</strong> {{ selected_wod.extras_description | show_lines }}</p>
 
   <form action="/new_log" method="post">
     <input type="hidden" name="workout_id" value="{{ selected_wod['id'] }}">
