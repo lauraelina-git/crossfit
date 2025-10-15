@@ -1,12 +1,11 @@
+{% extends 'layout.html' %}
+{% block title %}New Workout{% endblock %}
+{% block content %}
 <!DOCTYPE html>
 <html>
 
-<head>
-  <title>New workout!!</title>
-</head>
-
 <body>
-  <h1> Workout of the Day: create a new WOD</h1>
+  <h2> Workout of the Day: create a new WOD</h2>
 
   {% if error %}
   <p style="color:red;">{{ error }}</p>
@@ -52,3 +51,4 @@
   </form>
 
 </body>
+{% endblock %}

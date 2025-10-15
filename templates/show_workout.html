@@ -1,9 +1,8 @@
+{% extends 'layout.html' %}
+{% block title %}Show Workout{% endblock %}
+{% block content %}
 <!DOCTYPE html>
 <html>
-
-<head>
-  <title>Workout of the Day for {{workout.workout_date}}</title>
-</head>
 
 <body>
   {% with messages = get_flashed_messages() %}
@@ -15,7 +14,16 @@
       </ul>
     {% endif %}
   {% endwith %}
-  <h1> Workout of the Day for {{ workout.workout_date }} (Programming: {{ programming.programming_week }})</h1>
+
+  <h2> Workout of the Day for {{ workout.workout_date }} (Programming: {{ programming.programming_week }})</h2>
+
+  {% if session.is_coach==1 %}
+  <p>
+    <a href="/edit_workout/{{ workout.id }}"> Edit Workout </a> or 
+  {% endif %}
+    <a href="/add_log/{{ workout.id }}"> Add this workout to the training log </a>
+  </p>
+
   <p><strong>Warm up: </strong></br>{{ workout.warmup_description | show_lines}}</p> 
   <p><strong>WOD: </strong></br>{{ workout.wod_description | show_lines}}</p> 
   <p><strong>Extras: </strong></br>{{ workout.extras_description | show_lines}}</p> 
@@ -26,26 +34,41 @@
     <p>No image available for this workout.</p>
   {% endif %}
   
-  {% for result in results %}
-    {% if result.user_id == session.user_id %}
-      <p><strong>My results ({{ result.log_date }}): </strong></br> {{ result.log_text | show_lines}} </p>
-    {% endif %}
-  {% endfor %}
-
   {% if results %}
-    <p><strong>All athletes that have done this WOD:</strong></p>
-    <ul>
+    <p><strong>Results for this WOD:</strong></p>
+       <ul>
       {% for result in results %}
         <li>
-          {{ result.username }}: {{ result.log_text }} 
-          <span>({{ result.likes_count }} likes)</span>
-          <form action="{{ url_for('like_result', log_id=result.id) }}" method="post">
+          {% if result.user_id == session.user_id %}
+            My result on {{ result.log_date }}: {{ result.log_text | show_lines}}
+            <span>({{ result.likes_count }} have liked this activity)</span>
+            <form action="{{ url_for('like_result', log_id=result.id) }}" method="post">
             {% if result.user_has_liked %}
               <button type="submit">Unlike</button>
             {% else %}
             <button type="submit">Like</button>
             {% endif %}  
           </form>
+          {% endif %}
+        </li>   
+      {% endfor %}
+    </ul>
+    
+    <p>Other Athletes results for this WOD:</p>
+    <ul>
+      {% for result in results %}
+        <li>
+          {% if result.user_id != session.user_id %}
+            {{ result.username }} on {{ result.log_date }}: {{ result.log_text | show_lines}}
+            <span>({{ result.likes_count }} have liked this activity)</span>
+            <form action="{{ url_for('like_result', log_id=result.id) }}" method="post">
+            {% if result.user_has_liked %}
+              <button type="submit">Unlike</button>
+            {% else %}
+              <button type="submit">Like</button>
+            {% endif %}  
+            </form>
+          {% endif %}
         </li>   
       {% endfor %}
     </ul>
@@ -69,19 +92,8 @@
   <input type="submit" value="Add comment"style=" margin-bottom: 10px;" />
 </form>
 
-  <p>
-    <a href="/"> Back to diary</a>
-  </p>
-  {% if session.is_coach==1 %}
-  <p>
-    <a href="/edit_workout/{{ workout.id }}"> Edit Workout </a>
-  </p>
-  {% endif %}
-    <p>
-    <a href="/add_log/{{ workout.id }}"> Add this workout to the training log </a>
-  </p>
+
 </body>
 
 </html>
-
-
+{% endblock %}

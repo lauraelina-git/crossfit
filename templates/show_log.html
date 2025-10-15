@@ -1,28 +1,22 @@
+{% extends 'layout.html' %}
+{% block title %}Show Log{% endblock %}
+{% block content %}
 <!DOCTYPE html>
 <html>
 
-<head>
-  <title>{{log.username}}'s training log on {{log.log_date}}</title>
-</head>
-
 <body>
-  <h1> {{log.username}}'s training log on {{log.log_date}}</h1>
-  <h2> {{log.workout_date}} Workout of the Day </h2>
+  <h2> {{log.username}}'s training log on {{log.log_date}}</h2>
+  <h3> {{log.workout_date}} Workout of the Day </h3>
   
+  <p>
+    <a href="/edit_log/{{ log.id }}"> Edit log </a> or 
+    <a href="/remove_log/{{ log.id }}"> Remove log </a>
+  </p>
   <p><strong>Warmup:</strong></br> {{ log.warmup_description | show_lines}}</p> 
   <p><strong>WOD:</strong></br> {{ log.wod_description | show_lines}}</p> 
   <p><strong>Extras:</strong></br> {{ log.extras_description | show_lines}}</p>
   <p><strong>Results:</strong></br>{{ log.log_text | show_lines}}</p>
-  <p>
-    <a href="/"> Back to {{ log.username }}'s diary</a>
-  </p>
-  <p>
-    <a href="/edit_log/{{ log.id }}"> Edit log </a>
-  </p>
-    <p>
-    <a href="/remove_log/{{ log.id }}"> Remove log </a>
-  </p>
 </body>
 
 </html>
-
+{% endblock %}

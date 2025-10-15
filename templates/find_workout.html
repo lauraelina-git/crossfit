@@ -1,12 +1,13 @@
+{% extends 'layout.html' %}
+{% block title %}Find workout{% endblock %}
+{% block content %}
 <!DOCTYPE html>
 <html>
-
-<head>
-  <title>Find workout</title>
-</head>
-
 <body>
-  <h1>Search for a WOD</h1>
+  <h2>Search for a WOD</h2>
+  {% if error %}
+    <p style="color:red;">{{ error }}</p>
+  {% endif %}
   <form action="/find_workout" method="get">
     <p>
       Keyword: <input type="text" name="query" value= "{{ query }}">
@@ -19,7 +20,7 @@
   </form>
 
   {% if query %}
-  <h2>Workouts:</h2>
+  <h3>Workouts:</h3>
   <ul>
     {% for result in results %}
     <li><a href="/workout/{{ result.id }}">WOD {{ result.workout_date }}</a></li>
@@ -28,3 +29,4 @@
   {% endif %}
 </body>
 </html>
+{% endblock %}

@@ -1,9 +1,8 @@
+{% extends 'layout.html' %}
+{% block title %}New Training Log{% endblock %}
+{% block content %}
 <!DOCTYPE html>
 <html>
-<head>
-  <title>New Training Log</title>
-</head>
-
 <body>
   <h1>Create a new training log</h1>
   <form action="/new_log" method="post">
@@ -47,3 +46,4 @@
   </form>
 </body>
 </html>
+{% endblock %}

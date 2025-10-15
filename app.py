@@ -297,17 +297,19 @@ def edit_workout(workout_id):
 def find_workout():
     """Find workout"""
 
-    results=[]
-    query=request.args.get("query")
+    results = []
+    query = request.args.get("query")
+    error = None
     if query:
         results=workouts.find_workouts(query)
-    else:
-        query=""
+        if not results:
+            error = "No workout found"
 
     return render_template(
         "find_workout.html",
-        query=query,
-        results=results
+        query = query,
+        results = results,
+        error = error
     )
 
 @app.route("/like_result/<int:log_id>", methods=["POST"])

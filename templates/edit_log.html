@@ -1,13 +1,13 @@
+{% extends 'layout.html' %}
+{% block title %}Edit Training Log{% endblock %}
+{% block content %} 
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Edit training Log</title>
-</head>
 
 <body>
-  <h1>Edit a training log</h1>
+  <h2>Edit a training log</h2>
 
-    <h2>WOD Details</h2>
+    <h3>WOD Details:</h3>
 
     <p><strong>Warmup:</strong> {{ log.warmup_description }}</p>
     <p><strong>WOD:</strong> {{ log.wod_description }}</p>
@@ -31,3 +31,4 @@
   </form>
 </body>
 </html>
+{% endblock %}
