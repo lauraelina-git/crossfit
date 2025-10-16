@@ -14,22 +14,36 @@
   </li>
   {% endfor %}
 </ul>
-{% if session.is_coach == 1 %}
-<h2>Workouts created by {{ session.username }}:</h2>
-<ul>
-  {% for workout in user_workouts %}
-  <li>
-    <a href="/workout/{{ workout.id }}">WOD {{ workout.workout_date }}</a>
-  </li>
-  {% endfor %}
-</ul>
+
+<div class="pagination">
+    {% if page_logs > 1 %}
+        <a href="{{ url_for('index', page_logs=page_logs - 1) }}">Edellinen</a>
+    {% endif %}
+    <span> Page{{ page_logs }}</span>
+    {% if logs|length >= per_page %}
+        <a href="{{ url_for('index', page_logs=page_logs + 1) }}">Seuraava</a>
+    {% endif %}
+</div>
+
 <h2>All Workouts:</h2>
 <ul>
   {% for workout in workouts %}
   <li>
     <a href="/workout/{{ workout.id }}">WOD {{ workout.workout_date }}</a>
+    {% if session.is_coach == 1 %}
+        <a href="/edit_workout/{{ workout.id }}">(Edit Workout){% if workout.user_id == session.user_id %}*{% endif %}</a>
+    {% endif %}
   </li>
   {% endfor %}
 </ul>
-{% endif %}
+
+<div class="pagination">
+    {% if page_workouts > 1 %}
+        <a href="{{ url_for('index', page_workouts=page_workouts - 1) }}">Previous</a>
+    {% endif %}
+    <span>Page {{ page_workouts }}</span>
+    {% if workouts|length == per_page %}
+        <a href="{{ url_for('index', page_workouts=page_workouts + 1) }}">Next</a>
+    {% endif %}
+</div>
 {% endblock %}

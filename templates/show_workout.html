@@ -52,25 +52,18 @@
     </li>   
     {% endfor %}
   </ul>
-  
-  <p><strong>Other Athletes' results for this WOD:</strong></p>
-  <ul>
-    {% for result in results %}
-    <li>
-      {% if result.user_id != session.user_id %}
-      <strong>{{ result.username }}</strong> on <strong>{{ result.log_date }}</strong>: {{ result.log_text | show_lines }}
-      <span>({{ result.likes_count }} have liked this activity)</span>
-      <form action="{{ url_for('like_result', log_id=result.id) }}" method="post">
-        {% if result.user_has_liked %}
-        <button type="submit">Unlike</button>
-        {% else %}
-        <button type="submit">Like</button>
-        {% endif %}  
-      </form>
-      {% endif %}
-    </li>   
-    {% endfor %}
-  </ul>
+
+  <!-- Sivutus suoritusten näyttämiseen -->
+  <div class="pagination">
+    {% if page_results > 1 %}
+        <a href="{{ url_for('show_workout', workout_id=workout.id, page_results=page_results - 1) }}">Edellinen</a>
+    {% endif %}
+    <span>Sivu {{ page_results }}</span>
+    {% if results|length >= 10 %}  <!-- Muutettu ehto -->
+        <a href="{{ url_for('show_workout', workout_id=workout.id, page_results=page_results + 1) }}">Seuraava</a>
+    {% endif %}
+  </div>
+
   {% endif %}
 
   <h3>Comments about the WOD</h3>

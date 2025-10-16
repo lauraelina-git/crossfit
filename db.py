@@ -9,6 +9,24 @@ def get_connection():
     con.row_factory = sqlite3.Row
     return con
 
+
+def initialize_db():
+    """Initialize the database using the schema.sql file."""
+    with open('schema.sql', 'r', encoding='utf-8') as f:
+        sql_script = f.read()
+
+    con = get_connection()
+    cursor = con.cursor()
+
+    cursor.executescript(sql_script)
+
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_workout_date ON workouts (workout_date)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_log_date ON logs (log_date)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_workout_id ON comments (workout_id)")
+
+    con.commit()
+    con.close()
+
 def execute(sql, params=None):
     """Execute a write operation (INSERT, UPDATE, DELETE)."""
     if params is None:

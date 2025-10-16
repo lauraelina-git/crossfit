@@ -1,10 +1,10 @@
 {% extends 'layout.html' %}
 
-{% block title %}New Training Log{% endblock %}
+{% block title %}Add a New Training Log{% endblock %}
 
 {% block content %}
 <body>
-  <h2>Create a new training log</h2>
+  <h2>Add a new training log</h2>
 
   {% if selected_wod %}
   <h3>WOD Details</h3>
@@ -13,7 +13,7 @@
   <p><strong>WOD:</strong> {{ selected_wod.wod_description }}</p>
   <p><strong>Extras:</strong> {{ selected_wod.extras_description }}</p>
 
-  <form action="/new_log" method="post">
+  <form action="/add_log/{{ selected_wod.id }}" method="post">
     <p>
       <label for="log_date"><strong>Date I did this WOD:</strong></label><br>
       <input type="date" id="log_date" name="log_date" required>

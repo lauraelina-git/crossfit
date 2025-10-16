@@ -19,29 +19,23 @@ def add_log(log_date, log_text, user_id, workout_id):
         print(f"Error adding log: {e}")
         return None
 
-def list_logs(user_id=None):
+def list_logs(user_id=None, page=1, per_page=10):
     """Return all logs or logs for a specific user, ordered by date descending."""
+    offset = (page - 1) * per_page
     if user_id is None:
-        sql = """SELECT id,
-                        log_date,
-                        log_text,
-                        user_id,
-                        workout_id
+        sql = """SELECT id, log_date, log_text, user_id, workout_id
                  FROM logs
-                 ORDER BY log_date DESC"""
-        return db.query(sql)
+                 ORDER BY log_date DESC
+                 LIMIT ? OFFSET ?"""
+        return db.query(sql, [per_page, offset])
 
-    sql = """SELECT l.id,
-                    l.log_date,
-                    l.log_text,
-                    l.workout_id,
-                    w.workout_date
+    sql = """SELECT l.id, l.log_date, l.log_text, l.workout_id, w.workout_date
             FROM logs l
             JOIN workouts w ON l.workout_id = w.id
             WHERE l.user_id = ?
             ORDER BY l.log_date DESC
-            """
-    return db.query(sql, [user_id])
+            LIMIT ? OFFSET ?"""
+    return db.query(sql, [user_id, per_page, offset])
 
 def list_log(log_id):
     """Return a single log entry by ID, including workout and user details."""
@@ -91,8 +85,9 @@ def remove_log(log_id, user_id):
         print(f"Error deleting log: {e}")
         return False
 
-def list_results(workout_id, user_id=None):
-    """list the results of the workout"""
+def list_results(workout_id, user_id=None, page=1, per_page=10):
+    """List the results of the workout with pagination."""
+    offset = (page - 1) * per_page
     sql = """SELECT
                 logs.id,
                 logs.log_date,
@@ -105,8 +100,9 @@ def list_results(workout_id, user_id=None):
              LEFT JOIN likes ON logs.id = likes.log_id
              WHERE logs.workout_id = ?
              GROUP BY logs.id
-             ORDER BY logs.log_date DESC"""
-    results = db.query(sql, [workout_id])
+             ORDER BY logs.log_date DESC
+             LIMIT ? OFFSET ?"""
+    results = db.query(sql, [workout_id, per_page, offset])
     results = [dict(r) for r in results]
 
     if user_id:
@@ -115,8 +111,7 @@ def list_results(workout_id, user_id=None):
                         FROM likes
                         WHERE log_id = ? 
                         AND user_id = ?"""
-
-            liked= db.query(sql, [r["id"], user_id])
+            liked = db.query(sql, [r["id"], user_id])
             r["user_has_liked"] = bool(liked)
     return results
 

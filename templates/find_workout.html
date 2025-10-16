@@ -28,6 +28,17 @@
     </li>
     {% endfor %}
   </ul>
+
+
+  <div class="pagination">
+      {% if page > 1 %}
+          <a href="{{ url_for('find_workout', query=query, page=page - 1) }}">Edellinen</a>
+      {% endif %}
+      <span>Sivu {{ page }}</span>
+      {% if results|length == 10 %}
+          <a href="{{ url_for('find_workout', query=query, page=page + 1) }}">Seuraava</a>
+      {% endif %}
+  </div>
   {% endif %}
 </body>
 {% endblock %}

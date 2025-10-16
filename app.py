@@ -44,13 +44,23 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@app.before_request
+def setup():
+    """Initialize the database before the first request."""
+    db.initialize_db()
+
 @app.route("/")
 @login_required
 def index():
     """Front-page (Diary) view"""
-    user_workoutlist = workouts.list_workouts(user_id=session["user_id"])
-    workout_list = workouts.list_workouts()
-    user_logs = logs.list_logs(user_id=session["user_id"])
+    page_workouts = request.args.get('page_workouts', 1, type=int)
+    page_logs = request.args.get('page_logs', 1, type=int)
+    per_page = 10
+
+    user_workoutlist = workouts.list_workouts(
+        page=page_workouts, per_page=per_page, user_id=session["user_id"])
+    workout_list = workouts.list_workouts(page=page_workouts, per_page=per_page)
+    user_logs = logs.list_logs(user_id=session["user_id"], page=page_logs, per_page=per_page)
 
     wod_count, last_training = logs.log_summary(user_id=session["user_id"])
     if not last_training:
@@ -58,12 +68,16 @@ def index():
 
     return render_template(
         "index.html",
-        user_workouts = user_workoutlist,
-        workouts = workout_list,
-        logs = user_logs,
-        wod_count = wod_count,
-        last_training = last_training
-        )
+        user_workouts=user_workoutlist,
+        workouts=workout_list,
+        logs=user_logs,
+        wod_count=wod_count,
+        last_training=last_training,
+        page_workouts=page_workouts,
+        page_logs=page_logs,
+        per_page=per_page
+    )
+
 
 @app.route("/new_log", methods=["GET", "POST"])
 @login_required
@@ -227,9 +241,13 @@ def create_workout():
 def show_workout(workout_id):
     """Showing the workout details"""
     wod = workouts.list_workout(int(workout_id))
-    results = logs.list_results(workout_id, session.get("user_id"))
-    comments = workouts.list_comments(workout_id)
     programming = workouts.get_programming(workout_id)
+
+    comments = workouts.list_comments(workout_id, page=1, per_page=10)
+
+    page_results = request.args.get('page_results', 1, type=int)
+    results = logs.list_results(workout_id, session.get("user_id"), page=page_results)
+
     if not wod:
         return "Workout not found", 404
 
@@ -241,12 +259,13 @@ def show_workout(workout_id):
             return redirect(f"/workout/{workout_id}")
 
     return render_template(
-            "show_workout.html",
-            workout = wod,
-            results = results,
-            comments = comments,
-            programming = programming
-            )
+        "show_workout.html",
+        workout=wod,
+        results=results,
+        comments=comments,
+        programming=programming,
+        page_results=page_results
+    )
 
 @app.route("/edit_workout/<int:workout_id>", methods=["GET","POST"])
 @login_required
@@ -299,9 +318,12 @@ def find_workout():
 
     results = []
     query = request.args.get("query")
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
     error = None
+
     if query:
-        results = workouts.find_workouts(query)
+        results = workouts.find_workouts(query, page, per_page)
         if not results:
             error = "No workout found"
 
@@ -309,7 +331,8 @@ def find_workout():
         "find_workout.html",
         query=query,
         results=results,
-        error=error
+        error=error,
+        page=page
     )
 
 @app.route("/like_result/<int:log_id>", methods=["POST"])
@@ -393,3 +416,6 @@ def logout():
     del session["user_id"]
     del session["username"]
     return redirect("/")
+
+if __name__ == "__main__":
+    app.run(debug=True)
