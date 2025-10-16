@@ -1,24 +1,42 @@
-# crossfit
-A webtool to log crossfit workouts
+# Crossfit diary
+This application is a webtool that an athlete can use to log his/her crossfit workouts. In crossfit, the workouts are called "Workout-of-the-Days", or with the accronym "WOD", carrying the date on which they are planned to be done. Usually all crossfit centers in the world follow a quasi-similar programming, varying only slightly. Usually all training centers have a programming cycle of 4-6 weeks, where the first week is lighter, and the second-last week hardest, and the last week is then called "deload", which again is a very light training week in order to make sure the athletes recover before the next round starts. This tool uses a 4-week programming.
 
-## Application functions:
-* A user can be created
-* User can sign in to the application
-* User can be assigned 2 roles: a coach and an athlete. 
-* By definition all users are athletes, but to have the coach priviledges, tick-box "coach" needs to be ticked upon registering.
-* Only Coaches can create WODs (Workout of the Day)
+## Users:
+* A user can be created by using the Sign Up-functionality on the frontpage
+* User can sign in to the application from the frontpage (login)
+* When a user is created, the user can also be given "coach"-rights by ticking a box in the registration form.
+
+## Workouts:
+* Only Coaches can create WODs (workouts).
+* In a workout, it is mandatory to add the date on which the WOD is planned to be done and the description of the workout.
+* There are also fields called "warm-up" and "extras". These are not mandatory to be done when doing the WOD, and they are not mandatory to be filled in a workout when workout is created
+* There are 4 levels of the workouts (programming weeks 1/2/3 and deload), and assigning a programming week is also mandatory.
 * All coaches can edit workouts, both the ones they have created and the ones other coaches have created
-* There are 4 levels of the workouts (programming weeks 1/2/3 and deload) 
-* Athletes and Coaches can choose any WOD created and add their own training log with the date they did the WOD
-* A training log can be added from the users diary "Create a new training log"
-* A training log can also be added from the workout's description using "Add this workout to the training log"
+* Workouts cannot be deleted.
+* All workouts have their own page, on which there may be image of the workout and where the workout can be commented
+* The users that have completed the WOD are listed on the WOD's page with their results. Their results can be liked or a like given can be removed (double likes not possible!)
+* Also an image can be added/edited to the workout by the coaches.
+
+## Logging the trainings and other application functions for all users (both athletes with and without coach-rights):
+* Users can choose any WOD created and add their own training log with the date they did the WOD (this does not have to be the same as the WOD date, altough in following the programming it is adviced to do the workouts on the day they are planned to be done)
+* A training log can be added from the users own diary from the link "Create a new training log"
+* A training log can also be added from the workout's page using "Add this workout to the training log"-link
 * Users can edit and remove their own training logs.
-* User can search for the WODs created using keywords in the WOD description (not in the warmup or extras, because they are not parts of the official programming of workouts)
+* User can search for the WODs created using keywords in the WOD description, but not in the warmup or extras, because they are not parts of the official programming of workouts.
 * When a user completes a training, it is listed to the users diary
-* The users that have completed the WOD are listed on the WOD's page
-* The WODs can be commented on the WOD's page
-* The accomplishments can be cheered (like)
-* Coaches can add images to the workouts - not yet functional
-* User can search for the WODs created using keywords.
 * There is a user page (Diary) where the athelete can review his accomplishments
 * The total amount of workouts done by the user and the date of the last workout done is mentioned in the diary
+
+## Testing the application
+
+Istall `flask`:
+
+```
+$ pip install flask
+```
+
+Then start the application, it will create the required database automatically. You can then use the application in a web browser.
+
+```
+$ flask run
+```
