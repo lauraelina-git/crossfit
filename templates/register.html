@@ -11,8 +11,10 @@
   {% if error %}
   <p style="color:red;">{{ error }}</p>
   {% endif %}
-
+  
   <form action="/create" method="post">
+    <p><strong>Username</strong> must be between 3 and 20 characters long and can only contain alphanumeric characters and underscores.</p>
+    <p><strong>Password</strong> must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.</p>
     <p>
       <label for="username"><strong>Username:</strong></label><br />
       <input type="text" id="username" name="username" required />

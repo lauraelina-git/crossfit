@@ -5,6 +5,7 @@ This application is a webtool that an athlete can use to log his/her crossfit wo
 * A user can be created by using the Sign Up-functionality on the frontpage
 * User can sign in to the application from the frontpage (login)
 * When a user is created, the user can also be given "coach"-rights by ticking a box in the registration form.
+* The username and password have limitations that are described on the registration page
 
 ## Workouts:
 * Only Coaches can create WODs (workouts).
@@ -29,14 +30,28 @@ This application is a webtool that an athlete can use to log his/her crossfit wo
 
 ## Testing the application
 
-Istall `flask`:
+Install `flask`:
 
 ```
 $ pip install flask
 ```
 
-Then start the application, it will create the required database automatically. You can then use the application in a web browser.
-
+To test the application, there are two options:
+1) to start with an empty database, just start the application, it will create the required database automatically.
 ```
 $ flask run
 ```
+2) or to create a test database. The current values in the seed.py are:
+* create_users(1000) --> creates 1000 users
+* create_workouts(2000) --> create 2000 workouts
+* create_logs(5000) --> create 5000 logs
+It will take some time to create the database, and therefore these can be modified in the seed.py file.
+Creating the test database can be done by running first seed.py with command
+```
+$ python3 seed.py
+```
+and then starting the application using
+```
+$ flask run
+```
+Then the application can be tested over a browser on 127.0.0.1:5000.

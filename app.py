@@ -4,6 +4,7 @@ import sqlite3
 from functools import wraps
 import secrets
 import os
+import re
 from flask import Flask
 from flask import flash, redirect, render_template, request, session, url_for
 from flask import abort
@@ -78,7 +79,6 @@ def index():
         per_page=per_page
     )
 
-
 @app.route("/new_log", methods=["GET", "POST"])
 @login_required
 def new_log():
@@ -105,7 +105,8 @@ def new_log():
                     return redirect("/")
             else:
                 print("Missing required fields.")
-    return render_template("new_log.html", wods=all_wods, selected_wod=selected_wod)
+    return render_template(
+        "new_log.html", wods=all_wods, selected_wod=selected_wod)
 
 @app.route("/log/<int:log_id>")
 @login_required
@@ -138,7 +139,8 @@ def edit_log(log_id):
             logs.update_log(log_id, log_date, log_text, session["user_id"])
             return redirect(f"/log/{log_id}")
 
-        return render_template("edit_log.html", log=training_log, error="All fields required")
+        return render_template(
+            "edit_log.html", log=training_log, error="All fields required")
 
     return render_template("edit_log.html", log=training_log)
 
@@ -174,7 +176,8 @@ def add_log(workout_id):
 
         if len(log_notes)>150:
             error = "Too much text added to notes"
-            return render_template("add_log.html", selected_wod=selected_wod, error=error)
+            return render_template(
+                "add_log.html", selected_wod=selected_wod, error=error)
 
         if log_notes and log_date:
             log_id = logs.add_log(log_date, log_notes, user_id, workout_id)
@@ -182,7 +185,8 @@ def add_log(workout_id):
                 return redirect("/")
         else:
             error = "Missing required fields."
-            return render_template("add_log.html", selected_wod=selected_wod, error=error)
+            return render_template(
+                "add_log.html", selected_wod=selected_wod, error=error)
 
     return render_template("add_log.html", selected_wod=selected_wod)
 
@@ -360,10 +364,23 @@ def create():
     password1 = request.form["password1"]
     password2 = request.form["password2"]
 
+    if not validate_username(username):
+        return render_template(
+            "register.html",
+            error="ERROR: Username must be between 3 and 20 characters long "
+            "and can only contain alphanumeric characters and underscores.")
+
     if password1 != password2:
-        return render_template("register.html",
+        return render_template(
+            "register.html",
             error="ERROR: The passwords must be the same")
 
+    if not validate_password(password1):
+        return render_template(
+            "register.html",
+            error="ERROR: Password must be at least 8 characters long and contain "
+            "at least one uppercase letter, one lowercase letter, "
+            "one number, and one special character.")
 
     is_coach = 1 if request.form.get("is_coach") else 0
     password_hash = generate_password_hash(password1)
@@ -372,9 +389,33 @@ def create():
         sql = "INSERT INTO users (username, password_hash, is_coach) VALUES (?, ?, ?)"
         db.execute(sql, [username, password_hash, is_coach])
     except sqlite3.IntegrityError:
-        return render_template("register.html", error="ERROR: The username is already in use")
+        return render_template(
+            "register.html",
+            error="ERROR: The username is already in use")
 
     return redirect("/login")
+
+def validate_username(username):
+    """Validate username according to specified rules."""
+    if len(username) < 3 or len(username) > 20:
+        return False
+    if not re.match(r"^[a-zA-Z0-9_]+$", username):
+        return False
+    return True
+
+def validate_password(password):
+    """Validate password according to specified rules."""
+    if len(password) < 8:
+        return False
+    if not re.search(r"[A-Z]", password):
+        return False
+    if not re.search(r"[a-z]", password):
+        return False
+    if not re.search(r"[0-9]", password):
+        return False
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return False
+    return True
 
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -390,8 +431,8 @@ def login():
         result = db.query(sql, [username])
 
         if not result:
-            return render_template("login.html",
-                    error="Wrong username or password")
+            return render_template(
+                "login.html", error="Wrong username or password")
 
         user = result[0]
         user_id = user["id"]
@@ -405,8 +446,8 @@ def login():
             session["is_coach"] = is_coach
             return redirect("/")
 
-        return render_template("login.html",
-                error="Wrong username or password")
+        return render_template(
+            "login.html", error="Wrong username or password")
 
 @app.route("/logout")
 def logout():
