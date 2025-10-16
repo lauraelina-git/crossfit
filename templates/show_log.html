@@ -1,9 +1,8 @@
 {% extends 'layout.html' %}
-{% block title %}Show Log{% endblock %}
-{% block content %}
-<!DOCTYPE html>
-<html>
 
+{% block title %}Show Log{% endblock %}
+
+{% block content %}
 <body>
   <h2> {{log.username}}'s training log on {{log.log_date}}</h2>
   <h3> {{log.workout_date}} Workout of the Day </h3>
@@ -17,6 +16,4 @@
   <p><strong>Extras:</strong></br> {{ log.extras_description | show_lines}}</p>
   <p><strong>Results:</strong></br>{{ log.log_text | show_lines}}</p>
 </body>
-
-</html>
 {% endblock %}

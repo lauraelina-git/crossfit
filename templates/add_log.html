@@ -1,35 +1,36 @@
 {% extends 'layout.html' %}
+
 {% block title %}New Training Log{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html lang="fi">
-
 <body>
-    <h2>Create a new training log</h2>
+  <h2>Create a new training log</h2>
 
-    {% if selected_wod %}
-        <h3>WOD Details</h3>
+  {% if selected_wod %}
+  <h3>WOD Details</h3>
 
-        <p><strong>Warmup:</strong> {{ selected_wod.warmup_description }}</p>
-        <p><strong>WOD:</strong> {{ selected_wod.wod_description }}</p>
-        <p><strong>Extras:</strong> {{ selected_wod.extras_description }}</p>
+  <p><strong>Warmup:</strong> {{ selected_wod.warmup_description }}</p>
+  <p><strong>WOD:</strong> {{ selected_wod.wod_description }}</p>
+  <p><strong>Extras:</strong> {{ selected_wod.extras_description }}</p>
 
-        <form action="/new_log" method="post">
-            <input type="hidden" name="workout_id" value="{{ selected_wod['id'] }}">
-            <p><strong>Date I did this WOD: </strong><br>
-                <input type="date" name="log_date" required>
-            </p>
-            <p><strong>Notes and Results: </strong><br>
-                <textarea name="log_notes" rows="5" cols="50" maxlength="150" wrap="hard" required></textarea>
-            </p>
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-            <input type="submit" name="save_log" value="Save Log"/>
-        </form>
-    {% endif %}
+  <form action="/new_log" method="post">
+    <p>
+      <label for="log_date"><strong>Date I did this WOD:</strong></label><br>
+      <input type="date" id="log_date" name="log_date" required>
+    </p>
+    <p>
+      <label for="log_notes"><strong>Notes and Results:</strong></label><br>
+      <textarea id="log_notes" name="log_notes" rows="5" cols="50" maxlength="150" wrap="hard" required></textarea>
+    </p>
+    <p>
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+      <input type="submit" name="save_log" value="Save Log"/>
+    </p>
+  </form>
+  {% endif %}
 
-    <form action="/" method="get" style="margin-top:10px;">
-        <input type="submit" value="Cancel">
-    </form>
+  <form action="/" method="get" style="margin-top:10px;">
+    <input type="submit" value="Cancel">
+  </form>
 </body>
-</html>
 {% endblock %}

@@ -1,20 +1,20 @@
 {% extends 'layout.html' %}
+
 {% block title %}Find workout{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html>
 <body>
   <h2>Search for a WOD</h2>
   {% if error %}
-    <p style="color:red;">{{ error }}</p>
+  <p style="color:red;">{{ error }}</p>
   {% endif %}
   <form action="/find_workout" method="get">
     <p>
-      Keyword: <input type="text" name="query" value= "{{ query }}">
+      <label for="query"><strong>Keyword:</strong></label>
+      <input type="text" id="query" name="query" value="{{ query }}">
     </p>
     <input type="submit" value="Search">
   </form>
-  <p>  </p>
   <form action="/" method="get">  
     <input type="submit" value="Cancel" />
   </form>
@@ -23,10 +23,11 @@
   <h3>Workouts:</h3>
   <ul>
     {% for result in results %}
-    <li><a href="/workout/{{ result.id }}">WOD {{ result.workout_date }}</a></li>
+    <li>
+      <a href="/workout/{{ result.id }}">WOD {{ result.workout_date }}</a>
+    </li>
     {% endfor %}
   </ul>
   {% endif %}
 </body>
-</html>
 {% endblock %}

@@ -14,22 +14,25 @@
 
   <form action="/create" method="post">
     <p>
-      Username: <br />
-      <input type="text" name="username" />
+      <label for="username"><strong>Username:</strong></label><br />
+      <input type="text" id="username" name="username" required />
     </p>
     <p>
-      Assign user also the role of a coach <br />
-      <input type="checkbox" name="is_coach" value="1">
+      <label for="is_coach"><strong>Assign user also the role of a coach:</strong></label><br />
+      <input type="checkbox" id="is_coach" name="is_coach" value="1">
     </p>
     <p>
-      Password: <br />
-      <input type="password" name="password1" />
+      <label for="password1"><strong>Password:</strong></label><br />
+      <input type="password" id="password1" name="password1" required />
     </p>
     <p>
-      Re-enter password: <br />
-      <input type="password" name="password2" />
+      <label for="password2"><strong>Re-enter password:</strong></label><br />
+      <input type="password" id="password2" name="password2" required />
     </p>
     <input type="submit" value="Create user" />
+  </form>
+  <form action="/" method="get" style="margin-top:10px;">
+    <input type="submit" value="Cancel">
   </form>
 </body>
 

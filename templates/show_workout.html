@@ -1,99 +1,95 @@
 {% extends 'layout.html' %}
-{% block title %}Show Workout{% endblock %}
-{% block content %}
-<!DOCTYPE html>
-<html>
 
+{% block title %}Show Workout{% endblock %}
+
+{% block content %}
 <body>
   {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul class="flash-messages">
-        {% for message in messages %}
-          {{ message }}
-        {% endfor %}
-      </ul>
-    {% endif %}
+  {% if messages %}
+  <ul class="flash-messages">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
   {% endwith %}
 
-  <h2> Workout of the Day for {{ workout.workout_date }} (Programming: {{ programming.programming_week }})</h2>
+  <h2>Workout of the Day for {{ workout.workout_date }} (Programming: {{ programming.programming_week }})</h2>
 
-  {% if session.is_coach==1 %}
+  {% if session.is_coach == 1 %}
   <p>
-    <a href="/edit_workout/{{ workout.id }}"> Edit Workout </a> or 
+    <a href="/edit_workout/{{ workout.id }}">Edit Workout</a> or 
   {% endif %}
-    <a href="/add_log/{{ workout.id }}"> Add this workout to the training log </a>
+    <a href="/add_log/{{ workout.id }}">Add this workout to the training log</a>
   </p>
 
-  <p><strong>Warm up: </strong></br>{{ workout.warmup_description | show_lines}}</p> 
-  <p><strong>WOD: </strong></br>{{ workout.wod_description | show_lines}}</p> 
-  <p><strong>Extras: </strong></br>{{ workout.extras_description | show_lines}}</p> 
+  <p><strong>Warm up:</strong><br>{{ workout.warmup_description | show_lines }}</p> 
+  <p><strong>WOD:</strong><br>{{ workout.wod_description | show_lines }}</p> 
+  <p><strong>Extras:</strong><br>{{ workout.extras_description | show_lines }}</p> 
 
   {% if workout.workout_image %}
-    <img src="{{ url_for('static', filename='uploads/' + workout.workout_image) }}" alt="Workout Image" style="max-width: 80%; height: auto;">
+  <img src="{{ url_for('static', filename='uploads/' + workout.workout_image) }}" alt="Workout Image" style="max-width: 80%; height: auto;">
   {% else %}
-    <p>No image available for this workout.</p>
+  <p>No image available for this workout.</p>
   {% endif %}
   
   {% if results %}
-    <p><strong>Results for this WOD:</strong></p>
-       <ul>
-      {% for result in results %}
-        <li>
-          {% if result.user_id == session.user_id %}
-            My result on {{ result.log_date }}: {{ result.log_text | show_lines}}
-            <span>({{ result.likes_count }} have liked this activity)</span>
-            <form action="{{ url_for('like_result', log_id=result.id) }}" method="post">
-            {% if result.user_has_liked %}
-              <button type="submit">Unlike</button>
-            {% else %}
-            <button type="submit">Like</button>
-            {% endif %}  
-          </form>
-          {% endif %}
-        </li>   
-      {% endfor %}
-    </ul>
-    
-    <p>Other Athletes results for this WOD:</p>
-    <ul>
-      {% for result in results %}
-        <li>
-          {% if result.user_id != session.user_id %}
-            {{ result.username }} on {{ result.log_date }}: {{ result.log_text | show_lines}}
-            <span>({{ result.likes_count }} have liked this activity)</span>
-            <form action="{{ url_for('like_result', log_id=result.id) }}" method="post">
-            {% if result.user_has_liked %}
-              <button type="submit">Unlike</button>
-            {% else %}
-              <button type="submit">Like</button>
-            {% endif %}  
-            </form>
-          {% endif %}
-        </li>   
-      {% endfor %}
-    </ul>
+  <p><strong>Results for this WOD:</strong></p>
+  <ul>
+    {% for result in results %}
+    <li>
+      {% if result.user_id == session.user_id %}
+      My result on <strong>{{ result.log_date }}</strong>: {{ result.log_text | show_lines }}
+      <span>({{ result.likes_count }} have liked this activity)</span>
+      <form action="{{ url_for('like_result', log_id=result.id) }}" method="post">
+        {% if result.user_has_liked %}
+        <button type="submit">Unlike</button>
+        {% else %}
+        <button type="submit">Like</button>
+        {% endif %}  
+      </form>
+      {% endif %}
+    </li>   
+    {% endfor %}
+  </ul>
+  
+  <p><strong>Other Athletes' results for this WOD:</strong></p>
+  <ul>
+    {% for result in results %}
+    <li>
+      {% if result.user_id != session.user_id %}
+      <strong>{{ result.username }}</strong> on <strong>{{ result.log_date }}</strong>: {{ result.log_text | show_lines }}
+      <span>({{ result.likes_count }} have liked this activity)</span>
+      <form action="{{ url_for('like_result', log_id=result.id) }}" method="post">
+        {% if result.user_has_liked %}
+        <button type="submit">Unlike</button>
+        {% else %}
+        <button type="submit">Like</button>
+        {% endif %}  
+      </form>
+      {% endif %}
+    </li>   
+    {% endfor %}
+  </ul>
   {% endif %}
 
   <h3>Comments about the WOD</h3>
-    {% if comments %}
-      <ul>
-        {% for comment in comments %}
-        <li>
-          <strong>{{ comment.username }}</strong>: {{ comment.comment_text }}
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-      <p>No comments yet. Be the first one to comment!</p>
-    {% endif %}
+  {% if comments %}
+  <ul>
+    {% for comment in comments %}
+    <li>
+      <strong>{{ comment.username }}</strong>: {{ comment.comment_text }}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No comments yet. Be the first one to comment!</p>
+  {% endif %}
 
-<form method="post" action="/workout/{{ workout.id }}">
-  <textarea name="comment_text" rows="3" cols="40" placeholder="Write your comment"maxlength="150" wrap="hard"></textarea><br>
-  <input type="submit" value="Add comment"style=" margin-bottom: 10px;" />
-</form>
-
-
+  <form method="post" action="/workout/{{ workout.id }}">
+    <label for="comment_text"><strong>Add your comment:</strong></label><br>
+    <textarea id="comment_text" name="comment_text" rows="3" cols="40" placeholder="Write your comment" maxlength="150" wrap="hard"></textarea><br>
+    <input type="submit" value="Add comment" style="margin-bottom: 10px;" />
+  </form>
 </body>
-
-</html>
 {% endblock %}

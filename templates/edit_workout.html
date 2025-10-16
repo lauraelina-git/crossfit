@@ -1,58 +1,52 @@
 {% extends 'layout.html' %}
+
 {% block title %}Edit Workout{% endblock %}
+
 {% block content %} 
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Edit Workout</title>
-</head>
-
 <body>
-  <h1>Edit Workout</h1>
-    {% if error %}
-      <p style="color:red;">{{ error }}</p>
-    {% endif %}
+  <h2>Edit Workout</h2>
+  {% if error %}
+  <p style="color:red;">{{ error }}</p>
+  {% endif %}
 
-    <form action="/edit_workout/{{ workout.id }}" method="post"  enctype="multipart/form-data" style="display:inline-block">
+  <form action="/edit_workout/{{ workout.id }}" method="post"  enctype="multipart/form-data" style="display:inline-block">
     <p>
-      WOD date: <br />
+      <label for="pvm"><strong>WOD date:</strong></label><br />
       <input type="date" id="pvm" name="workout_date" required>
     </p>
     <p>
-      Description of the warm up: <br />
-      <textarea name="warmup_description" rows="8" cols="80" maxlength="300" wrap="hard">{{ workout.warmup_description }}</textarea>
+      <label for="warmup_description"><strong>Description of the warm up:</strong></label><br />
+      <textarea id="warmup_description" name="warmup_description" rows="8" cols="80" maxlength="300" wrap="hard">{{ workout.warmup_description }}</textarea>
     </p>
     <p>
-      Description of the WOD: <br />
-      <textarea name="wod_description" rows="15" cols="80" maxlength="300" wrap="hard" required>{{ workout.wod_description }}</textarea>
+      <label for="wod_description"><strong>Description of the WOD:</strong></label><br />
+      <textarea id="wod_description" name="wod_description" rows="15" cols="80" maxlength="300" wrap="hard" required>{{ workout.wod_description }}</textarea>
     </p>
     <p>
-      Description of the extras <br />
-      <textarea name="extras_description" rows="8" cols="80" maxlength="300" wrap="hard">{{ workout.extras_description }}</textarea>
+      <label for="extras_description"><strong>Description of the extras:</strong></label><br />
+      <textarea id="extras_description" name="extras_description" rows="8" cols="80" maxlength="300" wrap="hard">{{ workout.extras_description }}</textarea>
     </p>
     <p>
-      Programming week:
-      <select name = week required>
-        <option value = "">Choose programming</option>
-        <option value = "Week 1">Week 1</option>
-        <option value = "Week 2">Week 2</option>
-        <option value = "Week 3">Week 3</option>
-        <option value = "Deload">Deload</option>
+      <label for="week"><strong>Programming week:</strong></label>
+      <select id="week" name="week" required>
+        <option value="">Choose programming</option>
+        <option value="Week 1">Week 1</option>
+        <option value="Week 2">Week 2</option>
+        <option value="Week 3">Week 3</option>
+        <option value="Deload">Deload</option>
       </select>
     </p>
     <p>
-      Upload image: <br />
-      <input type="file" name="workout_image" accept="image/*" style="margin-top: 10px;">
+      <label for="workout_image"><strong>Upload image:</strong></label><br />
+      <input type="file" id="workout_image" name="workout_image" accept="image/*" style="margin-top: 10px;">
     </p>
-
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-    <input type="submit" value="Save workout" /><br />
+    <p>
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+      <input type="submit" value="Save workout" /><br />
+    </p>
   </form>
   <form action="/" method="get">
-    <p>
-    </p>
     <input type="submit" value="Cancel" />
   </form>
 </body>
-</html>
 {% endblock %}

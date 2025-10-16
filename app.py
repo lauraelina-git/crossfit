@@ -48,9 +48,9 @@ def login_required(f):
 @login_required
 def index():
     """Front-page (Diary) view"""
-    user_workoutlist= workouts.list_workouts(user_id=session["user_id"])
-    workout_list= workouts.list_workouts()
-    user_logs=logs.list_logs(user_id=session["user_id"])
+    user_workoutlist = workouts.list_workouts(user_id=session["user_id"])
+    workout_list = workouts.list_workouts()
+    user_logs = logs.list_logs(user_id=session["user_id"])
 
     wod_count, last_training = logs.log_summary(user_id=session["user_id"])
     if not last_training:
@@ -60,9 +60,9 @@ def index():
         "index.html",
         user_workouts = user_workoutlist,
         workouts = workout_list,
-        logs=user_logs,
-        wod_count=wod_count,
-        last_training=last_training
+        logs = user_logs,
+        wod_count = wod_count,
+        last_training = last_training
         )
 
 @app.route("/new_log", methods=["GET", "POST"])
@@ -135,10 +135,10 @@ def remove_log(log_id):
     user_id = session["user_id"]
 
     if request.method == "GET":
-        current_log=logs.list_log(log_id)
+        current_log = logs.list_log(log_id)
         return render_template("remove_log.html", log=current_log)
 
-    if request.method =="POST":
+    if request.method == "POST":
         check_csrf()
         logs.remove_log(log_id, user_id)
 
@@ -187,12 +187,12 @@ def create_workout():
 
     check_csrf()
 
-    wod_date=request.form["workout_date"]
-    warmup_description=request.form["warmup_description"]
-    wod_description=request.form["wod_description"]
-    extras_description=request.form["extras_description"]
-    user_id=session["user_id"]
-    programming=request.form.get("week")
+    wod_date = request.form["workout_date"]
+    warmup_description = request.form["warmup_description"]
+    wod_description = request.form["wod_description"]
+    extras_description = request.form["extras_description"]
+    user_id = session["user_id"]
+    programming = request.form.get("week")
     workout_image_file = None
 
     if 'workout_image' in request.files:
@@ -227,7 +227,7 @@ def create_workout():
 def show_workout(workout_id):
     """Showing the workout details"""
     wod = workouts.list_workout(int(workout_id))
-    results=logs.list_results(workout_id, session.get("user_id"))
+    results = logs.list_results(workout_id, session.get("user_id"))
     comments = workouts.list_comments(workout_id)
     programming = workouts.get_programming(workout_id)
     if not wod:
@@ -261,11 +261,11 @@ def edit_workout(workout_id):
 
     if request.method == "POST":
         check_csrf()
-        wod_date=request.form.get("workout_date")
-        warmup_description=request.form.get("warmup_description")
-        wod_description=request.form.get("wod_description")
-        extras_description=request.form.get("extras_description")
-        programming=request.form.get("week")
+        wod_date = request.form.get("workout_date")
+        warmup_description = request.form.get("warmup_description")
+        wod_description = request.form.get("wod_description")
+        extras_description = request.form.get("extras_description")
+        programming = request.form.get("week")
         workout_image_file = wod['workout_image']
 
         if 'workout_image' in request.files:
@@ -301,15 +301,15 @@ def find_workout():
     query = request.args.get("query")
     error = None
     if query:
-        results=workouts.find_workouts(query)
+        results = workouts.find_workouts(query)
         if not results:
             error = "No workout found"
 
     return render_template(
         "find_workout.html",
-        query = query,
-        results = results,
-        error = error
+        query=query,
+        results=results,
+        error=error
     )
 
 @app.route("/like_result/<int:log_id>", methods=["POST"])
@@ -339,7 +339,7 @@ def create():
 
     if password1 != password2:
         return render_template("register.html",
-                error="ERROR: The passwords must be the same")
+            error="ERROR: The passwords must be the same")
 
 
     is_coach = 1 if request.form.get("is_coach") else 0
@@ -359,7 +359,7 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
 
-    if request.method=="POST":
+    if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
@@ -370,13 +370,13 @@ def login():
             return render_template("login.html",
                     error="Wrong username or password")
 
-        user=result[0]
+        user = result[0]
         user_id = user["id"]
         password_hash = user["password_hash"]
-        is_coach=user["is_coach"]
+        is_coach = user["is_coach"]
 
         if check_password_hash(password_hash, password):
-            session["user_id"]= user_id
+            session["user_id"] = user_id
             session["csrf_token"] = secrets.token_hex(16)
             session["username"] = username
             session["is_coach"] = is_coach
