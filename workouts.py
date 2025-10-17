@@ -41,22 +41,31 @@ def list_workouts(page=1, per_page=10, user_id=None):
     """Return workouts with pagination"""
     offset = (page - 1) * per_page
     if user_id is None:
-        sql = """SELECT id,
-                        workout_date,
-                        user_id
+        sql = """SELECT id, workout_date, user_id
                  FROM workouts
                  ORDER BY workout_date DESC
-                 LIMIT ? OFFSET?"""
-        return db.query(sql, [per_page, offset])
+                 LIMIT ? OFFSET ?"""
+        result=db.query(sql, [per_page, offset])
 
-    sql = """SELECT id,
-                    workout_date,
-                    user_id
+    else:
+        sql = """SELECT id, workout_date,user_id
             FROM workouts
             WHERE user_id = ?
             ORDER BY workout_date DESC
             LIMIT ? OFFSET ?"""
-    return db.query(sql, [user_id, per_page, offset])
+        result=db.query(sql, [user_id, per_page, offset])
+    return result
+
+def count_workouts(user_id=None):
+    """Return the total number of workouts for a specific user or all workouts."""
+    if user_id:
+        sql = "SELECT COUNT(id) FROM workouts WHERE user_id = ?"
+        result = db.query(sql, [user_id])
+    else:
+        sql = "SELECT COUNT(id) FROM workouts"
+        result = db.query(sql)
+
+    return result[0][0] if result else 0
 
 def list_workout(workout_id):
     """Return a single workout including its id, date, creator, descriptions and image."""

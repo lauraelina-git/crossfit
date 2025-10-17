@@ -3,31 +3,29 @@
 {% block title %}Edit Training Log{% endblock %}
 
 {% block content %} 
-<body>
-  <h2>Edit a training log</h2>
+<h2>Edit a training log</h2>
 
-  <h3>WOD Details:</h3>
+<h3>WOD Details:</h3>
 
-  <p><strong>Warmup:</strong> {{ log.warmup_description }}</p>
-  <p><strong>WOD:</strong> {{ log.wod_description }}</p>
-  <p><strong>Extras:</strong> {{ log.extras_description }}</p>
+<p><strong>Warmup:</strong> {{ log.warmup_description }}</p>
+<p><strong>WOD:</strong> {{ log.wod_description }}</p>
+<p><strong>Extras:</strong> {{ log.extras_description }}</p>
 
-  <form action="/edit_log/{{ log.id }}" method="post">
-    <p>
-      <label for="log_date"><strong>Date:</strong></label><br>
-      <input type="date" id="log_date" name="log_date" value="{{ log.log_date }}" required>
-    </p>
-    <p>
-      <label for="log_notes"><strong>Your notes:</strong></label><br>
-      <textarea id="log_notes" name="log_notes" rows="5" cols="50" wrap="hard" required>{{ log.log_text }}</textarea>
-    </p>
-    <p>
-      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-      <input type="submit" value="Save Log">
-    </p>
-  </form>
-  <form action="/" method="get" style="margin-top:10px;">
-    <input type="submit" value="Cancel">
-  </form>
-</body>
+<form action="/edit_log/{{ log.id }}" method="post">
+  <p>
+    <label for="log_date"><strong>Date:</strong></label><br>
+    <input type="date" id="log_date" name="log_date" value="{{ log.log_date }}" required>
+  </p>
+  <p>
+    <label for="log_notes"><strong>Your notes:</strong></label><br>
+    <textarea id="log_notes" name="log_notes" rows="5" cols="50" wrap="hard" required>{{ log.log_text }}</textarea>
+  </p>
+  <p>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+    <input type="submit" value="Save Log">
+  </p>
+</form>
+<form action="/" method="get" style="margin-top:10px;">
+  <input type="submit" value="Cancel">
+</form>
 {% endblock %}

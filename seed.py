@@ -21,13 +21,14 @@ def create_users(num_users):
 def create_workouts(num_workouts):
     """Create test workouts."""
     users = db.query("SELECT id FROM users")
+    programming_weeks = ['1', '2', '3', 'deload']
     for i in range(num_workouts):
         user_id = random.choice(users)["id"]
         workout_date = datetime.now() - timedelta(days=random.randint(0, 30))
         warmup_description = f"Warmup for workout {i}"
-        wod_description = f"Workout of the Day {i}: Do {random.randint(5, 20)} reps of everything!"
+        wod_description = f"Do {random.randint(5, 20)} reps of everything!"
         extras_description = "Extra work: core and mobility."
-        programming_week = f"Week {random.randint(1, 12)}"
+        programming_week = random.choice(programming_weeks)
 
         sql = """INSERT INTO workouts (
                     workout_date,

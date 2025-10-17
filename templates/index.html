@@ -5,6 +5,7 @@
 {% block content %}
 <h2>{{ session.username }}'s training logs:</h2>
 <p>{{ wod_count }} WODs completed, last training on: {{ last_training }}</p>
+
 <ul>
   {% for log in logs %}
   <li>
@@ -16,16 +17,19 @@
 </ul>
 
 <div class="pagination">
+  <p>
     {% if page_logs > 1 %}
-        <a href="{{ url_for('index', page_logs=page_logs - 1) }}">Edellinen</a>
+      <a href="{{ url_for('index', page_logs=page_logs - 1) }}">&lt;&lt;</a>
     {% endif %}
-    <span> Page{{ page_logs }}</span>
-    {% if logs|length >= per_page %}
-        <a href="{{ url_for('index', page_logs=page_logs + 1) }}">Seuraava</a>
+    Page {{ page_logs }} / {{ (total_logs + per_page - 1) // per_page }}
+    {% if logs|length == per_page and (page_logs * per_page) < total_logs %}
+      <a href="{{ url_for('index', page_logs=page_logs + 1) }}">&gt;&gt;</a>
     {% endif %}
+  </p>
 </div>
 
 <h2>All Workouts:</h2>
+<p>Workouts created by {{ session.username }} are marked with (*)</p>
 <ul>
   {% for workout in workouts %}
   <li>
@@ -34,16 +38,21 @@
         <a href="/edit_workout/{{ workout.id }}">(Edit Workout){% if workout.user_id == session.user_id %}*{% endif %}</a>
     {% endif %}
   </li>
+  {% else %}
+  <li>No workouts available.</li>
   {% endfor %}
 </ul>
 
 <div class="pagination">
+  <p>
     {% if page_workouts > 1 %}
-        <a href="{{ url_for('index', page_workouts=page_workouts - 1) }}">Previous</a>
+      <a href="{{ url_for('index', page_workouts=page_workouts - 1) }}">&lt;&lt;</a>
     {% endif %}
-    <span>Page {{ page_workouts }}</span>
-    {% if workouts|length == per_page %}
-        <a href="{{ url_for('index', page_workouts=page_workouts + 1) }}">Next</a>
+    Page {{ page_workouts }} / {{ (total_workouts + per_page - 1) // per_page }}
+    {% if workouts|length == per_page and (page_workouts * per_page) < total_workouts %}
+      <a href="{{ url_for('index', page_workouts=page_workouts + 1) }}">&gt;&gt;</a>
     {% endif %}
+  </p>
 </div>
+
 {% endblock %}

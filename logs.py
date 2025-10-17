@@ -37,6 +37,18 @@ def list_logs(user_id=None, page=1, per_page=10):
             LIMIT ? OFFSET ?"""
     return db.query(sql, [user_id, per_page, offset])
 
+def count_logs(user_id=None):
+    """Return the total number of logs for a specific user or all workouts."""
+    if user_id:
+        sql = "SELECT COUNT(id) FROM logs WHERE user_id = ?"
+        result = db.query(sql, [user_id])
+    else:
+        sql = "SELECT COUNT(id) FROM logs"
+        result = db.query(sql)
+
+    return result[0][0] if result else 0
+
+
 def list_log(log_id):
     """Return a single log entry by ID, including workout and user details."""
     sql = """SELECT l.id,
@@ -115,27 +127,36 @@ def list_results(workout_id, user_id=None, page=1, per_page=10):
             r["user_has_liked"] = bool(liked)
     return results
 
+def count_results(workout_id):
+    """Return the total number of results for a specific workout."""
+    sql = """
+            SELECT COUNT(id) 
+            FROM logs 
+            WHERE workout_id = ?"""
+    result = db.query(sql, [workout_id])
+    return result[0][0] if result else 0
+
 def check_likes(log_id, user_id):
     """Check if the user has liked the result"""
-    sql = """SELECT id
-             FROM likes 
-             WHERE log_id = ?
-             AND user_id = ?"""
+    sql = """
+            SELECT id
+            FROM likes 
+            WHERE log_id = ?
+            AND user_id = ?"""
     return db.query(sql, [log_id, user_id])
 
 def unlike_log(log_id, user_id):
     """Unlike the result"""
-    sql = """DELETE FROM likes
-             WHERE log_id = ?
-             AND user_id = ?"""
+    sql = """
+            DELETE FROM likes
+            WHERE log_id = ?
+            AND user_id = ?"""
     db.execute(sql, [log_id, user_id])
 
 
 def like_log(log_id, user_id):
     """Like the result"""
-    sql = """INSERT INTO likes (
-                log_id,
-                user_id) 
+    sql = """INSERT INTO likes (log_id, user_id)
              VALUES (?, ?)"""
     db.execute(sql, [log_id, user_id])
 

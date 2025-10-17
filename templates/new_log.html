@@ -3,58 +3,56 @@
 {% block title %}New Training Log{% endblock %}
 
 {% block content %}
-<body>
-  <h2>Create a new training log</h2>
-  <form action="/new_log" method="post">
-    <p>
-      <label for="workout_id"><strong>Select WOD:</strong></label><br>
-      <select id="workout_id" name="workout_id" required>
-        <option value="" disabled selected>Select a WOD</option>
-        {% for wod in wods %}
-        <option value="{{ wod.id }}"
-        {% if selected_wod and selected_wod.id == wod.id %}selected{% endif %}>
-          WOD {{ wod.workout_date }}
-        </option>
-        {% endfor %}
-      </select>
-    </p>
-    <p>
-      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-      <input type="submit" name="select_wod" value="Show WOD Details">
-    </p>
-  </form>
-
-  {% if selected_wod %}
-  <h3>WOD Details</h3>
-
+<h2>Create a new training log</h2>
+<form action="/new_log" method="post">
   <p>
-    <strong>Warmup:</strong> {{ selected_wod.warmup_description | show_lines }}
+    <label for="workout_id"><strong>Select WOD:</strong></label><br>
+    <select id="workout_id" name="workout_id" required>
+      <option value="" disabled selected>Select a WOD</option>
+      {% for wod in wods %}
+      <option value="{{ wod.id }}"
+      {% if selected_wod and selected_wod.id == wod.id %}selected{% endif %}>
+      WOD {{ wod.workout_date }}
+      </option>
+      {% endfor %}
+    </select>
   </p>
   <p>
-    <strong>WOD:</strong> {{ selected_wod.wod_description | show_lines }}
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+    <input type="submit" name="select_wod" value="Show WOD Details">
+  </p>
+</form>
+
+{% if selected_wod %}
+<h3>WOD Details</h3>
+
+<p>
+  <strong>Warmup:</strong> {{ selected_wod.warmup_description | show_lines }}
+</p>
+<p>
+  <strong>WOD:</strong> {{ selected_wod.wod_description | show_lines }}
+</p>
+<p>
+  <strong>Extras:</strong> {{ selected_wod.extras_description | show_lines }}
+</p>
+
+<form action="/new_log" method="post">
+  <input type="hidden" name="workout_id" value="{{ selected_wod['id'] }}">
+  <p>
+    <label for="log_date"><strong>Date I did this WOD:</strong></label><br>
+    <input type="date" id="log_date" name="log_date" required>
   </p>
   <p>
-    <strong>Extras:</strong> {{ selected_wod.extras_description | show_lines }}
+    <label for="log_notes"><strong>Notes and Results:</strong></label><br>
+    <textarea id="log_notes" name="log_notes" rows="5" cols="50" maxlength="150" wrap="hard" required></textarea>
   </p>
-
-  <form action="/new_log" method="post">
-    <input type="hidden" name="workout_id" value="{{ selected_wod['id'] }}">
-    <p>
-      <label for="log_date"><strong>Date I did this WOD:</strong></label><br>
-      <input type="date" id="log_date" name="log_date" required>
-    </p>
-    <p>
-      <label for="log_notes"><strong>Notes and Results:</strong></label><br>
-      <textarea id="log_notes" name="log_notes" rows="5" cols="50" maxlength="150" wrap="hard" required></textarea>
-    </p>
-    <p>
-      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-      <input type="submit" name="save_log" value="Save Log">
-    </p>
-  </form>
-  {% endif %}
-  <form action="/" method="get" style="margin-top:10px;">
-    <input type="submit" value="Cancel">
-  </form>
-</body>
+  <p>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+    <input type="submit" name="save_log" value="Save Log">
+  </p>
+</form>
+{% endif %}
+<form action="/" method="get" style="margin-top:10px;">
+  <input type="submit" value="Cancel">
+</form>
 {% endblock %}

@@ -3,22 +3,21 @@
 {% block title %}Remove Training Log{% endblock %}
 
 {% block content %}
-<body>
-  <h2>Remove a training log</h2>
 
-  <h3>WOD Details</h3>
-  <p><strong>Are you sure you want to remove this training log?</strong> </p>
-  <p>Warmup:{{ log.warmup_description }}</p>
-  <p>WOD: {{ log.wod_description }}</p>
-  <p>Extras:{{ log.extras_description }}</p>
-  <p>Results: {{ log.log_text }}</p>
+<h2>Remove a training log</h2>
 
-  <form action="/remove_log/{{ log.id }}" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-    <input type="submit" name="remove" value="Remove Log"/>
-  </form>
-  <form action="/" method="get" style="margin-top:10px;">
-    <input type="submit" name="cancel" value="Cancel"/>
-  </form>
-</body>
+<h3>WOD Details</h3>
+<p><strong>Are you sure you want to remove this training log?</strong> </p>
+<p>Warmup:{{ log.warmup_description }}</p>
+<p>WOD: {{ log.wod_description }}</p>
+<p>Extras:{{ log.extras_description }}</p>
+<p>Results: {{ log.log_text }}</p>
+
+<form action="/remove_log/{{ log.id }}" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+  <input type="submit" name="remove" value="Remove Log"/>
+</form>
+<form action="/" method="get" style="margin-top:10px;">
+  <input type="submit" name="cancel" value="Cancel"/>
+</form>
 {% endblock %}

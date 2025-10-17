@@ -3,42 +3,41 @@
 {% block title %}Find workout{% endblock %}
 
 {% block content %}
-<body>
-  <h2>Search for a WOD</h2>
-  {% if error %}
-  <p style="color:red;">{{ error }}</p>
-  {% endif %}
-  <form action="/find_workout" method="get">
-    <p>
-      <label for="query"><strong>Keyword:</strong></label>
-      <input type="text" id="query" name="query" value="{{ query }}">
-    </p>
-    <input type="submit" value="Search">
-  </form>
-  <form action="/" method="get">  
-    <input type="submit" value="Cancel" />
-  </form>
+<h2>Search for a WOD</h2>
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
+<form action="/find_workout" method="get">
+  <p>
+    <label for="query"><strong>Keyword:</strong></label>  
+    <input type="text" id="query" name="query" value="{{ query }}">
+  </p>
+  <input type="submit" value="Search">
+</form>
+<form action="/" method="get">  
+  <input type="submit" value="Cancel" />
+</form>
 
-  {% if query %}
-  <h3>Workouts:</h3>
-  <ul>
-    {% for result in results %}
-    <li>
-      <a href="/workout/{{ result.id }}">WOD {{ result.workout_date }}</a>
-    </li>
-    {% endfor %}
-  </ul>
+{% if query %}
+<h3>Workouts:</h3>
+<ul>
+  {% for result in results %}
+  <li>
+    <a href="/workout/{{ result.id }}">WOD {{ result.workout_date }}</a>
+  </li>
+  {% endfor %}
+</ul>
 
-
-  <div class="pagination">
-      {% if page > 1 %}
-          <a href="{{ url_for('find_workout', query=query, page=page - 1) }}">Edellinen</a>
-      {% endif %}
-      <span>Sivu {{ page }}</span>
-      {% if results|length == 10 %}
-          <a href="{{ url_for('find_workout', query=query, page=page + 1) }}">Seuraava</a>
-      {% endif %}
-  </div>
-  {% endif %}
-</body>
+<div class="pagination">
+  <p>
+    {% if page > 1 %}
+      <a href="{{ url_for('find_workout', query=query, page=page - 1) }}">Previous</a>
+    {% endif %}
+    Page {{ page }} / {{ (total_results + per_page - 1) // per_page }}
+    {% if results|length == per_page and (page * per_page) < total_results %}
+      <a href="{{ url_for('find_workout', query=query, page=page + 1) }}">Next</a>
+    {% endif %}
+  </p>
+</div>
+{% endif %}
 {% endblock %}

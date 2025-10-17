@@ -6,7 +6,7 @@ import secrets
 import os
 import re
 from flask import Flask
-from flask import flash, redirect, render_template, request, session, url_for
+from flask import redirect, render_template, request, session, url_for
 from flask import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 import markupsafe
@@ -63,6 +63,9 @@ def index():
     workout_list = workouts.list_workouts(page=page_workouts, per_page=per_page)
     user_logs = logs.list_logs(user_id=session["user_id"], page=page_logs, per_page=per_page)
 
+    total_logs = logs.count_logs(user_id=session["user_id"])
+    total_workouts = workouts.count_workouts()
+
     wod_count, last_training = logs.log_summary(user_id=session["user_id"])
     if not last_training:
         last_training = "No logs yet"
@@ -72,6 +75,8 @@ def index():
         user_workouts=user_workoutlist,
         workouts=workout_list,
         logs=user_logs,
+        total_logs=total_logs,
+        total_workouts=total_workouts,
         wod_count=wod_count,
         last_training=last_training,
         page_workouts=page_workouts,
@@ -83,7 +88,7 @@ def index():
 @login_required
 def new_log():
     """Create a new log"""
-    all_wods = workouts.list_workouts()
+    all_wods = workouts.list_workouts(page=1, per_page=30)
     selected_wod = None
 
     if request.method == "POST":
@@ -251,16 +256,10 @@ def show_workout(workout_id):
 
     page_results = request.args.get('page_results', 1, type=int)
     results = logs.list_results(workout_id, session.get("user_id"), page=page_results)
+    total_results = logs.count_results(workout_id)
 
     if not wod:
         return "Workout not found", 404
-
-    if request.method == "POST":
-        comment_text = request.form.get("comment_text")
-        if comment_text:
-            workouts.add_comment(workout_id, session["user_id"], comment_text)
-            flash("Comment added")
-            return redirect(f"/workout/{workout_id}")
 
     return render_template(
         "show_workout.html",
@@ -268,7 +267,9 @@ def show_workout(workout_id):
         results=results,
         comments=comments,
         programming=programming,
-        page_results=page_results
+        page_results=page_results,
+        total_results=total_results,
+        per_page=10
     )
 
 @app.route("/edit_workout/<int:workout_id>", methods=["GET","POST"])
@@ -328,17 +329,21 @@ def find_workout():
 
     if query:
         results = workouts.find_workouts(query, page, per_page)
+        total_results = workouts.count_workouts()
         if not results:
             error = "No workout found"
+    else:
+        total_results = 0
 
     return render_template(
         "find_workout.html",
         query=query,
         results=results,
         error=error,
-        page=page
+        page=page,
+        total_results=total_results,
+        per_page=per_page
     )
-
 @app.route("/like_result/<int:log_id>", methods=["POST"])
 @login_required
 def like_result(log_id):

@@ -3,51 +3,51 @@
 {% block title %}New Workout{% endblock %}
 
 {% block content %}
-<body>
-  <h2>Workout of the Day: create a new WOD</h2>
 
-  {% if error %}
-  <p style="color:red;">{{ error }}</p>
-  {% endif %}
+<h2>Workout of the Day: create a new WOD</h2>
 
-  <form action="/create_workout" method="post" enctype="multipart/form-data" style="display:inline-block">
-    <p>
-      <label for="pvm"><strong>WOD date:</strong></label><br />
-      <input type="date" id="pvm" name="workout_date" required>
-    </p>
-    <p>
-      <label for="warmup_description"><strong>Description of the warm up:</strong></label><br />
-      <textarea id="warmup_description" name="warmup_description" rows="8" cols="80" maxlength="300" wrap="hard"></textarea>
-    </p>
-    <p>
-      <label for="wod_description"><strong>Description of the WOD:</strong></label><br />
-      <textarea id="wod_description" name="wod_description" rows="15" cols="80" maxlength="300" wrap="hard" required></textarea>
-    </p>
-    <p>
-      <label for="extras_description"><strong>Description of the extras:</strong></label><br />
-      <textarea id="extras_description" name="extras_description" rows="8" cols="80" maxlength="300" wrap="hard"></textarea>
-    </p>
-    <p>
-      <label for="week"><strong>Programming week:</strong></label>
-      <select id="week" name="week" required>
-        <option value="">Choose programming</option>
-        <option value="Week 1">Week 1</option>
-        <option value="Week 2">Week 2</option>
-        <option value="Week 3">Week 3</option>
-        <option value="Deload">Deload</option>
-      </select>
-    </p>
-    <p>
-      <label for="workout_image"><strong>Upload image:</strong></label><br />
-      <input type="file" id="workout_image" name="workout_image" accept="image/*" style="margin-top: 10px;">
-    </p>
-    <p>
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
+
+<form action="/create_workout" method="post" enctype="multipart/form-data" style="display:inline-block">
+  <p>
+    <label for="pvm"><strong>WOD date:</strong></label><br />
+    <input type="date" id="pvm" name="workout_date" required>
+  </p>
+  <p>
+    <label for="warmup_description"><strong>Description of the warm up:</strong></label><br />
+    <textarea id="warmup_description" name="warmup_description" rows="8" cols="80" maxlength="300" wrap="hard"></textarea>
+  </p>
+  <p>
+    <label for="wod_description"><strong>Description of the WOD:</strong></label><br />
+    <textarea id="wod_description" name="wod_description" rows="15" cols="80" maxlength="300" wrap="hard" required></textarea>
+  </p>
+  <p>
+    <label for="extras_description"><strong>Description of the extras:</strong></label><br />
+    <textarea id="extras_description" name="extras_description" rows="8" cols="80" maxlength="300" wrap="hard"></textarea>
+  </p>
+  <p>
+    <label for="week"><strong>Programming week:</strong></label>
+    <select id="week" name="week" required>
+      <option value="">Choose programming</option>
+      <option value="Week 1">Week 1</option>
+      <option value="Week 2">Week 2</option>
+      <option value="Week 3">Week 3</option>
+      <option value="Deload">Deload</option>
+    </select>
+  </p>
+  <p>
+    <label for="workout_image"><strong>Upload image:</strong></label><br />
+    <input type="file" id="workout_image" name="workout_image" accept="image/*" style="margin-top: 10px;">
+  </p>
+  <p>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
     <input type="submit" value="Create workout"style=" margin-bottom: 10px;" />
-    </p>
-  </form>
-  <form action="/" method="get">
-    <input type="submit" value="Cancel" />
-  </form>
-</body>
+  </p>
+</form>
+<form action="/" method="get">
+  <input type="submit" value="Cancel" />
+</form>
+
 {% endblock %}
