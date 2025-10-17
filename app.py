@@ -22,6 +22,12 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
+_initialized = False
+
+if not _initialized:
+    db.initialize_db()
+    _initialized = True
+    
 def check_csrf():
     """check csrf token validity"""
     if "csrf_token" not in request.form:
@@ -44,11 +50,6 @@ def login_required(f):
             return redirect(url_for("login"))
         return f(*args, **kwargs)
     return decorated_function
-
-@app.before_request
-def setup():
-    """Initialize the database before the first request."""
-    db.initialize_db()
 
 @app.route("/")
 @login_required
