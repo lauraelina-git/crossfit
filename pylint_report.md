@@ -3,8 +3,9 @@
 Pylint gives the following report about the application:
 
 ```
+
 ************* Module app
-app.py:426:0: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+app.py:437:0: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
 ************* Module workouts
 workouts.py:5:0: R0913: Too many arguments (7/5) (too-many-arguments)
 workouts.py:5:0: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
@@ -20,7 +21,7 @@ workouts.py:1:0: R0801: Similar lines in 2 files
                 extras_description, (duplicate-code)
 
 ------------------------------------------------------------------
-Your code has been rated at 9.88/10 (previous run: 9.86/10, +0.02)
+Your code has been rated at 9.88/10 (previous run: 9.84/10, +0.04)
 
 ```
 Let's review these notifications by category:

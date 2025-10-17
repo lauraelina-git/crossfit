@@ -32,15 +32,15 @@
 {% else %}
 <p>No image available for this workout.</p>
 {% endif %}
-  
-{% if results %}
+
 <p><strong>Results for this WOD:</strong></p>
+{% if results %}
 <ul>
   {% for result in results %}
   <li>
     {% if result.user_id == session.user_id %}
     <strong>My result on {{ result.log_date }}</strong>: {{ result.log_text | show_lines }}
-    <span>({{ result.likes_count }} have liked this activity)</span>
+    <span>({{ result.likes_count }} like on this activity)</span>
     <form action="{{ url_for('like_result', log_id=result.id) }}" method="post">
       {% if result.user_has_liked %}
       <button type="submit">Unlike</button>
@@ -82,8 +82,10 @@
     {% endif %}
   </p>
 </div>
-
+{% else %}
+<p>No-one has completed this WOD. Be the first one to do it!</p>
 {% endif %}
+
 
 <h3>Comments about the WOD</h3>
 {% if comments %}
@@ -99,6 +101,7 @@
 {% endif %}
 
 <form method="post" action="/workout/{{ workout.id }}">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
   <label for="comment_text"><strong>Add your comment:</strong></label><br>
   <textarea id="comment_text" name="comment_text" rows="3" cols="40" placeholder="Write your comment" maxlength="150" wrap="hard"></textarea><br>
   <input type="submit" value="Add comment" style="margin-bottom: 10px;" />

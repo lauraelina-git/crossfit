@@ -22,12 +22,12 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-_initialized = False
+IS_INITIALIZED = False
 
-if not _initialized:
+if not IS_INITIALIZED:
     db.initialize_db()
-    _initialized = True
-    
+    IS_INITIALIZED = True
+
 def check_csrf():
     """check csrf token validity"""
     if "csrf_token" not in request.form:
@@ -258,6 +258,16 @@ def show_workout(workout_id):
     page_results = request.args.get('page_results', 1, type=int)
     results = logs.list_results(workout_id, session.get("user_id"), page=page_results)
     total_results = logs.count_results(workout_id)
+
+    if request.method == "POST":
+        check_csrf()
+        comment_text = request.form.get("comment_text")
+        user_id = session["user_id"]
+
+        if comment_text:
+            workouts.add_comment(workout_id, user_id, comment_text)
+            return redirect(url_for('show_workout', workout_id=workout_id))
+        print("Comment text is missing.")
 
     if not wod:
         return "Workout not found", 404
