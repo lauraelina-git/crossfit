@@ -2,6 +2,7 @@
 import sqlite3
 import random
 from datetime import datetime, timedelta
+import time
 from werkzeug.security import generate_password_hash
 import db
 from app import app
@@ -75,11 +76,15 @@ def create_logs(num_logs):
 
 def main():
     """Seed the database with test data."""
+    time_start= time.time()
     with app.app_context():
         db.initialize_db()
         create_users(1000)
         create_workouts(2000)
         create_logs(5000)
+    time_stop=time.time()
+    elapsed=time_stop-time_start
+    print(f"elapsed time {elapsed}")
 
 if __name__ == "__main__":
     main()

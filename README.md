@@ -28,7 +28,7 @@ This application is a webtool that an athlete can use to log his/her crossfit wo
 * There is a user page (Diary) where the athelete can review his accomplishments
 * The total amount of workouts done by the user and the date of the last workout done is mentioned in the diary
 
-## Testing the application
+## How to test the application
 
 Install `flask`:
 
@@ -55,3 +55,11 @@ and then starting the application using
 $ flask run
 ```
 Then the application can be tested over a browser on 127.0.0.1:5000.
+
+## Test results
+
+The application was tested with the seed.py. First the database was created with 1000 users, 2000 workouts and 5000 logs. Creating the database took 45 seconds. The testing was done with and without indexes in the database, and no delays in executions were visible. There was a timer in the app.py during the testing, and the timer showed mainly 0.0 s and at most 0.1s for all operations.
+
+Then the application was tested with database that had 10^5 workouts. Creating the database took over 15 minutes. Surprisingly there was no impact seen in the operations of the application, all operations still worked within 0.0-0.1s, both when indexes implemented and without them.
+
+The timer was on purpose deleted from the app.py before pushing the code to github, because it is not used in normal operations and may cause confusion in the code review.
