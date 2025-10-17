@@ -20,8 +20,8 @@ This application is a webtool that an athlete can use to log his/her crossfit wo
 
 ## Logging the trainings and other application functions for all users (both athletes with and without coach-rights):
 * Users can choose any WOD created and add their own training log with the date they did the WOD (this does not have to be the same as the WOD date, altough in following the programming it is adviced to do the workouts on the day they are planned to be done)
-* A training log can be added from the users own diary from the link "Create a new training log"
-* A training log can also be added from the workout's page using "Add this workout to the training log"-link
+* A training log for the last 30 workouts can be added from the users own diary from the link "Create a new training log"
+* A training log can also be added from any workout's page using "Add this workout to the training log"-link. This functionality is to be used to add for example very old workouts done on a later date.
 * Users can edit and remove their own training logs.
 * User can search for the WODs created using keywords in the WOD description, but not in the warmup or extras, because they are not parts of the official programming of workouts.
 * When a user completes a training, it is listed to the users diary
