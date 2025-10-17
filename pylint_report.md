@@ -1,4 +1,4 @@
-#Pylint report
+# Pylint report
 
 Pylint gives the following report about the application:
 
